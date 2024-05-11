@@ -16,13 +16,13 @@ class FavPage extends StatelessWidget {
         children: <Widget>[
           CustomAppBar(
             title: Text(
-              S.of(context).collect,
+              S.of(context)?.collect ?? '',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,
               ),
             ),
-            color: Theme.of(context).accentColor,
+            color: Theme.of(context).primaryColor,
             leftBtn: IconButton(
               icon: Icon(
                 Icons.menu,
@@ -35,9 +35,9 @@ class FavPage extends StatelessWidget {
               labelColor: Colors.white,
               indicatorColor: Colors.white,
               tabs: [
-                Tab(text: S.of(context).readOrGanHuo),
-                Tab(text: S.of(context).gift),
-                Tab(text: S.of(context).giftPhotos),
+                Tab(text: S.of(context)?.readOrGanHuo),
+                Tab(text: S.of(context)?.gift),
+                Tab(text: S.of(context)?.giftPhotos),
               ],
             ),
           ),

@@ -1,20 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_weather/generated/i18n.dart';
 import 'package:flutter_weather/model/data/gank_data.dart';
 import 'package:flutter_weather/model/data/mzi_data.dart';
-import 'package:flutter_weather/utils/system_util.dart';
-import 'package:flutter_weather/view/page/gift_photo_watch_page.dart';
 import 'package:flutter_weather/view/page/page_state.dart';
 import 'package:flutter_weather/view/widget/loading_view.dart';
-import 'package:flutter_weather/view/widget/net_image.dart';
-import 'package:flutter_weather/viewmodel/gank_viewmodel.dart';
+import 'package:flutter_weather/viewmodel/gank_viewModel.dart';
 import 'package:flutter_weather/viewmodel/viewmodel.dart';
 
 class GiftGankPage extends StatefulWidget {
-  GiftGankPage({Key key}) : super(key: key);
+  GiftGankPage({Key? key}) : super(key: key);
 
   @override
   State createState() => GiftGankState();
@@ -48,7 +44,7 @@ class GiftGankState extends PageState<GiftGankPage>
           .stream
           .where((b) => b)
           .listen((_) => networkError(
-              errorText: S.of(context).gankFail, retry: _viewModel.reload))
+              errorText: S.of(context)?.gankFail, retry: _viewModel.reload))
           .bindLife(this);
   }
 
@@ -72,50 +68,52 @@ class GiftGankState extends PageState<GiftGankPage>
         child: StreamBuilder(
           stream: _viewModel.data.stream,
           builder: (context, snapshot) {
-            final GankData data = snapshot.data;
+            final GankData? data = snapshot.data;
             final List<MziItem> list = data?.data
                     ?.map((v) => v.url)
-                    ?.map((v) => MziItem(
+                    .map((v) => MziItem(
                         height: 459, width: 337, url: v, isImages: false))
-                    ?.toList() ??
+                    .toList() ??
                 [];
             _photoStream.safeAdd(list);
 
             return RefreshIndicator(
               onRefresh: () => _viewModel.loadData(type: LoadType.REFRESH),
-              child: StaggeredGridView.countBuilder(
-                crossAxisCount: 2,
-                mainAxisSpacing: 4,
-                crossAxisSpacing: 4,
-                controller: _scrollController,
-                physics: const AlwaysScrollableScrollPhysics(
-                    parent: const ClampingScrollPhysics()),
-                padding: const EdgeInsets.fromLTRB(2, 4, 2, 0),
-                itemCount: list.length,
-                staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-                itemBuilder: (context, index) {
-                  final current = list[index];
+              // TODO:
+              child: Text('TODO'),
+              // child: StaggeredGridView.countBuilder(
+              //   crossAxisCount: 2,
+              //   mainAxisSpacing: 4,
+              //   crossAxisSpacing: 4,
+              //   controller: _scrollController,
+              //   physics: const AlwaysScrollableScrollPhysics(
+              //       parent: const ClampingScrollPhysics()),
+              //   padding: const EdgeInsets.fromLTRB(2, 4, 2, 0),
+              //   itemCount: list.length,
+              //   staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+              //   itemBuilder: (context, index) {
+              //     final current = list[index];
 
-                  return RepaintBoundary(
-                    child: GestureDetector(
-                      onTap: () => push(context,
-                          page: GiftPhotoWatchPage(
-                              index: index,
-                              photos: list,
-                              max: data.totalCounts,
-                              photoStream: _photoStream.stream,
-                              loadDataFun: _viewModel.loadMore)),
-                      child: AspectRatio(
-                        aspectRatio: current.width / current.height,
-                        child: Hero(
-                          tag: "${current.url}${index}true",
-                          child: NetImage(url: current.url),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
+              //     return RepaintBoundary(
+              //       child: GestureDetector(
+              //         onTap: () => push(context,
+              //             page: GiftPhotoWatchPage(
+              //                 index: index,
+              //                 photos: list,
+              //                 max: data.totalCounts,
+              //                 photoStream: _photoStream.stream,
+              //                 loadDataFun: _viewModel!.loadMore)),
+              //         child: AspectRatio(
+              //           aspectRatio: current.width / current.height,
+              //           child: Hero(
+              //             tag: "${current.url}${index}true",
+              //             child: NetImage(url: current.url),
+              //           ),
+              //         ),
+              //       ),
+              //     );
+              //   },
+              // ),
             );
           },
         ),

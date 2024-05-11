@@ -9,11 +9,11 @@ import 'package:flutter_weather/view/widget/net_image.dart';
 class ReadItemView extends StatelessWidget {
   final GankItem data;
 
-  ReadItemView({@required this.data});
+  ReadItemView({required this.data});
 
   @override
   Widget build(BuildContext context) {
-    final img = data.images?.firstWhere((v) => v != null, orElse: () => null);
+    final img = data.images?.firstWhere((v) => v != null, orElse: () => '');
 
     return Card(
       color: Colors.white,
@@ -22,7 +22,7 @@ class ReadItemView extends StatelessWidget {
       child: InkWell(
         onTap: () => push(context,
             page: CustomWebViewPage(
-                title: data.title, url: data.url, favData: data)),
+                title: data.title!, url: data.url!, favData: data)),
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Stack(
@@ -61,7 +61,7 @@ class ReadItemView extends StatelessWidget {
                     Text.rich(
                       TextSpan(
                         children: [
-                          TextSpan(text: data.publishedAt.substring(0, 10)),
+                          TextSpan(text: data.publishedAt!.substring(0, 10)),
                           TextSpan(
                             text: " · ",
                             style: TextStyle(

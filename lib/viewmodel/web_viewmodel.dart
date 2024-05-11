@@ -1,19 +1,19 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter_weather/common/streams.dart';
 import 'package:flutter_weather/model/holder/fav_holder.dart';
 import 'package:flutter_weather/viewmodel/viewmodel.dart';
 
 class WebViewModel<T> extends ViewModel {
   final isFav = StreamController<bool>();
 
-  WebViewModel({@required T favData}) {
+  WebViewModel({required T favData}) {
     if (favData == null) return;
 
     FavHolder()
-        .favReadStream
+        .favReadStream!
         .listen((_) => isFav.safeAdd(FavHolder().isFavorite(favData)))
-        .bindLife(this);
+        .bindLife(this as StreamSubController);
 
     isFav.safeAdd(FavHolder().isFavorite(favData));
     isLoading.safeAdd(true);

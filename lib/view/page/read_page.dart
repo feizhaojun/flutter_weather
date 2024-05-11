@@ -7,7 +7,7 @@ import 'package:flutter_weather/view/page/page_state.dart';
 import 'package:flutter_weather/view/page/read_content_page.dart';
 import 'package:flutter_weather/view/widget/custom_app_bar.dart';
 import 'package:flutter_weather/view/widget/loading_view.dart';
-import 'package:flutter_weather/viewmodel/read_viewmodel.dart';
+import 'package:flutter_weather/viewmodel/read_viewModel.dart';
 
 class ReadPage extends StatefulWidget {
   @override
@@ -25,10 +25,10 @@ class ReadState extends PageState<ReadPage> {
       ..loadTitle()
       ..error
           .stream
-          .where((b) => b)
-          .listen((_) => networkError(
-              errorText: S.of(context).readTitleFail, retry: _viewModel.reload))
-          .bindLife(this);
+          .where((b) => b);
+          // .listen((_) => networkError(
+          //     errorText: S.of(context)?.readTitleFail, retry: _viewModel.reload))
+          // .bindLife(this);
   }
 
   @override
@@ -55,13 +55,13 @@ class ReadState extends PageState<ReadPage> {
                 children: <Widget>[
                   CustomAppBar(
                     title: Text(
-                      S.of(context).read,
+                      S.of(context)?.read ?? '',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
                       ),
                     ),
-                    color: Theme.of(context).accentColor,
+                    color: Theme.of(context).primaryColor,
                     leftBtn: IconButton(
                       icon: Icon(
                         Icons.menu,

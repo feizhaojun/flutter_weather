@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AqiUtil {
-  /// 根据空气指数获得颜色
+  // 根据空气指数获得颜色
   static Color getAqiColor(double aqi) {
     Color color;
     if (aqi <= 50) {

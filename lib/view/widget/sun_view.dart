@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 /// 圆形的太阳
 class SunView extends StatelessWidget {
-  /// 外围轮廓颜色
+  // 外围轮廓颜色
   final Color outColor;
 
-  SunView({@required this.outColor});
+  SunView({required this.outColor});
 
   @override
   Widget build(BuildContext context) {

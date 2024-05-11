@@ -11,13 +11,13 @@ void cleanFocus(BuildContext context) =>
 
 /// 根据Android或IOS显示不同风格dialog
 Future<void> showDiffDialog(BuildContext context,
-    {Widget title,
-    Widget content,
-    String yesText,
-    String noText,
+    {Widget? title,
+    Widget? content,
+    String? yesText,
+    String? noText,
     EdgeInsetsGeometry contentPadding =
         const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-    VoidCallback onPressed}) async {
+    VoidCallback? onPressed}) async {
   showDialog(
     context: context,
     builder: (context) => isAndroid
@@ -27,13 +27,13 @@ Future<void> showDiffDialog(BuildContext context,
             contentPadding: contentPadding,
             actions: <Widget>[
               noText != null
-                  ? FlatButton(
+                  ? TextButton(
                       onPressed: () => pop(context),
                       child: Text(noText),
                     )
                   : Container(),
               yesText != null
-                  ? FlatButton(
+                  ? TextButton(
                       onPressed: onPressed,
                       child: Text(yesText),
                     )
@@ -62,17 +62,15 @@ Future<void> showDiffDialog(BuildContext context,
 }
 
 class ToastUtil {
-  static OverlayEntry _overlayEntry;
+  static OverlayEntry? _overlayEntry;
 
-  /// 显示toast
+  // 显示toast
   static Future<void> showToast(BuildContext context, String msg) async {
-    if (msg == null) return;
-
     _overlayEntry?.remove();
 
     _overlayEntry = OverlayEntry(
         builder: (context) => LayoutBuilder(
             builder: (context, constraints) => ToastView(msg: msg)));
-    Overlay.of(context).insert(_overlayEntry);
+    Overlay.of(context).insert(_overlayEntry!);
   }
 }

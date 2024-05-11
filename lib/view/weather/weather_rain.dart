@@ -17,7 +17,7 @@ class WeatherRain extends StatefulWidget {
   final bool hail;
 
   WeatherRain(
-      {Key key,
+      {Key? key,
       this.rain = false,
       this.snow = false,
       this.flash = false,
@@ -30,9 +30,9 @@ class WeatherRain extends StatefulWidget {
 }
 
 class WeatherRainState extends WeatherBase<WeatherRain> {
-  /// 山的移动动画
-  AnimationController _mountainController;
-  Animation<double> _mountainAnim;
+  // 山的移动动画
+  AnimationController? _mountainController;
+  Animation<double>? _mountainAnim;
 
   @override
   void initState() {
@@ -51,7 +51,7 @@ class WeatherRainState extends WeatherBase<WeatherRain> {
       final width = getScreenWidth(context);
       _mountainAnim = Tween(begin: -160.0, end: width - 200).animate(
           CurvedAnimation(
-              parent: _mountainController,
+              parent: _mountainController!,
               curve: const Cubic(0.4, 0.8, 0.75, 1.3)));
     }
   }
@@ -72,7 +72,7 @@ class WeatherRainState extends WeatherBase<WeatherRain> {
         children: <Widget>[
           // 山
           AnimatedBuilder(
-            animation: _mountainAnim,
+            animation: _mountainAnim!,
             builder: (context, child) {
               return Positioned(
                 child: Image.asset(
@@ -80,7 +80,7 @@ class WeatherRainState extends WeatherBase<WeatherRain> {
                   width: 210,
                 ),
                 bottom: widget.snow ? -6 : widget.hail ? 0 : -2,
-                left: _mountainAnim.value,
+                left: _mountainAnim!.value,
               );
             },
           ),

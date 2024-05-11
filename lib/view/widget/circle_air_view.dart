@@ -7,13 +7,13 @@ import 'package:flutter_weather/utils/aqi_util.dart';
 
 /// 空气质量指数环形图
 class CircleAirView extends StatefulWidget {
-  /// 空气指数
+  // 空气指数
   final double aqi;
 
-  /// 等级
+  // 等级
   final String qlty;
 
-  CircleAirView({Key key, @required this.aqi, @required this.qlty})
+  CircleAirView({Key? key, required this.aqi, required this.qlty})
       : super(key: key);
 
   @override
@@ -22,9 +22,9 @@ class CircleAirView extends StatefulWidget {
 
 class CircleAirState extends State<CircleAirView>
     with TickerProviderStateMixin, StreamSubController {
-  AnimationController _controller;
-  Animation<int> _numAnim;
-  Animation<Color> _colorAnim;
+  AnimationController? _controller;
+  Animation<int>? _numAnim;
+  Animation<Color?>? _colorAnim;
 
   bool _canAnim = true;
 
@@ -58,18 +58,18 @@ class CircleAirState extends State<CircleAirView>
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _numAnim,
+      animation: _numAnim!,
       builder: (context, child) {
         return Stack(
           children: <Widget>[
             Positioned.fill(
               child: AnimatedBuilder(
-                animation: _colorAnim,
+                animation: _colorAnim!,
                 builder: (context, child) {
                   return CustomPaint(
                     willChange: true,
                     painter: _CircleAirPainter(
-                        _numAnim.value.toDouble(), _colorAnim.value),
+                        _numAnim!.value.toDouble(), _colorAnim!.value!),
                   );
                 },
               ),
@@ -78,7 +78,7 @@ class CircleAirState extends State<CircleAirView>
             Positioned.fill(
               child: Center(
                 child: Text(
-                  "${_numAnim.value}",
+                  "${_numAnim!.value}",
                   style: TextStyle(fontSize: 14, color: AppColor.text2),
                 ),
               ),
@@ -106,11 +106,11 @@ class CircleAirState extends State<CircleAirView>
 
   void _initAndStartAnim() {
     _numAnim = IntTween(begin: 0, end: widget.aqi.round())
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
+        .animate(CurvedAnimation(parent: _controller!, curve: Curves.linear));
     _colorAnim = ColorTween(
             begin: AqiUtil.getAqiColor(0), end: AqiUtil.getAqiColor(widget.aqi))
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
-    _controller.reset();
+        .animate(CurvedAnimation(parent: _controller!, curve: Curves.linear));
+    _controller!.reset();
     _canAnim = true;
   }
 
@@ -118,7 +118,7 @@ class CircleAirState extends State<CircleAirView>
     if (!_canAnim) return;
     _canAnim = false;
 
-    _controller.forward();
+    _controller!.forward();
   }
 }
 

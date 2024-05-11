@@ -7,9 +7,8 @@ class LoadingView extends StatefulWidget {
   final Widget child;
   final Stream<bool> loadingStream;
 
-  LoadingView({Key key, @required this.loadingStream, @required this.child})
-      : assert(child != null && loadingStream != null),
-        super(key: key);
+  LoadingView({Key? key, required this.loadingStream, required this.child})
+      : super(key: key);
 
   @override
   State createState() => LoadingState();
@@ -18,8 +17,8 @@ class LoadingView extends StatefulWidget {
 /// 带有圆形加载进度条的Stack
 class LoadingState extends State<LoadingView>
     with TickerProviderStateMixin, StreamSubController {
-  AnimationController _controller;
-  Animation<Size> _animation;
+  AnimationController? _controller;
+  Animation<Size?>? _animation;
 
   @override
   void initState() {
@@ -28,7 +27,7 @@ class LoadingState extends State<LoadingView>
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 300));
     _animation = SizeTween(begin: Size(50, 50), end: Size.zero)
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
+        .animate(CurvedAnimation(parent: _controller!, curve: Curves.linear));
     dismiss();
 
     widget.loadingStream.listen((loading) {
@@ -57,15 +56,15 @@ class LoadingState extends State<LoadingView>
         Container(
           margin: const EdgeInsets.only(top: 40),
           child: AnimatedBuilder(
-            animation: _animation,
+            animation: _animation!,
             builder: (context, child) {
               return Container(
                 alignment: Alignment.center,
                 height: 50,
                 width: 50,
                 child: Container(
-                  height: _animation.value.height,
-                  width: _animation.value.width,
+                  height: _animation!.value!.height,
+                  width: _animation!.value!.width,
                   child: const RefreshProgressIndicator(),
                 ),
               );
@@ -76,13 +75,13 @@ class LoadingState extends State<LoadingView>
     );
   }
 
-  /// 显示加载进度条
+  // 显示加载进度条
   void show() {
-    _controller.reset();
+    _controller!.reset();
   }
 
-  /// 隐藏进度条
+  // 隐藏进度条
   void dismiss() {
-    _controller.forward();
+    _controller!.forward();
   }
 }

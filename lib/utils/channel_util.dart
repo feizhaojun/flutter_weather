@@ -5,22 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_weather/model/data/city_data.dart';
 import 'package:flutter_weather/utils/system_util.dart';
-import 'package:wallpaper_manager/wallpaper_manager.dart';
-
-import 'log_util.dart';
+// import 'package:wallpaper_manager/wallpaper_manager.dart';
+// TODO: wallpaper_manager_flutter
 
 class ChannelUtil {
   /// 平台通道工具
   static final _platform = MethodChannel(_ChannelTag.CHANNEL_NAME);
 
-  /// 获取位置
-  static Future<City> getLocation() async {
-    City city;
+  // 获取位置
+  // static Future<City> getLocation() async {
+  static Future<City?> getLocation() async {
+    City? city;
 
     try {
       final String result =
           await _platform.invokeMethod(_ChannelTag.START_LOCATION);
-      if (result?.isNotEmpty == true) {
+      if (result.isNotEmpty == true) {
         final str = result
             .replaceFirst("区", "")
             .replaceFirst("县", "")
@@ -33,12 +33,11 @@ class ChannelUtil {
     } on MissingPluginException catch (e) {
       _doError(e);
     }
-
     return city;
   }
 
-  /// 调用系统邮件
-  static Future<bool> sendEmail({@required String email}) async {
+  // 调用系统邮件
+  static Future<bool> sendEmail({required String email}) async {
     bool result = false;
     try {
       result = await _platform.invokeMethod(_ChannelTag.SEND_EMAIL, {
@@ -51,11 +50,11 @@ class ChannelUtil {
     return result;
   }
 
-  /// 更新安装包
+  // 更新安装包
   static Future<bool> updateApp(
-      {@required String url,
-      @required int verCode,
-      @required bool isWifi}) async {
+      {required String url,
+      required int verCode,
+      required bool isWifi}) async {
     bool result = false;
     try {
       result = await _platform.invokeMethod(_ChannelTag.DOWNLOAD_APK, {
@@ -70,8 +69,8 @@ class ChannelUtil {
     return result;
   }
 
-  /// 更新安装包
-  static Future<void> installApp({@required int verCode}) async {
+  // 更新安装包
+  static Future<void> installApp({required int verCode}) async {
     try {
       await _platform.invokeMethod(_ChannelTag.INSTALL_APK, {
         "verCode": verCode,
@@ -81,7 +80,7 @@ class ChannelUtil {
     }
   }
 
-  /// 判断是否正在下载安装包
+  // 判断是否正在下载安装包
   static Future<bool> isDownloading() async {
     bool result = false;
     if (isAndroid) {
@@ -95,12 +94,13 @@ class ChannelUtil {
     return result;
   }
 
-  /// 设置壁纸
-  static Future<void> setWallpaper({@required String path}) async {
+  // 设置壁纸
+  static Future<void> setWallpaper({required String path}) async {
     try {
       if (isAndroid) {
-        await WallpaperManager.setWallpaperFromFile(
-            path, WallpaperManager.BOTH_SCREENS);
+        // TODO: 
+        // await WallpaperManager.setWallpaperFromFile(
+        //     path, WallpaperManager.BOTH_SCREENS);
       } else {
         await _platform.invokeMethod(_ChannelTag.SET_WALLPAPER, {
           "path": path,
@@ -112,7 +112,7 @@ class ChannelUtil {
   }
 
   static void _doError<T extends Exception>(T e) =>
-      debugLog("=====>通道错误：${e.toString()}");
+      debugPrint("=====>通道错误：${e.toString()}");
 }
 
 /// 平台通道的名字和方法

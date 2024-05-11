@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_weather/model/data/mzi_data.dart';
 import 'package:flutter_weather/model/service/gift_mzi_service.dart';
 import 'package:flutter_weather/viewmodel/viewmodel.dart';
@@ -11,17 +10,17 @@ class GiftMziViewModel extends ViewModel {
 
   final _service = GiftMziService();
 
-  String _typeUrl;
-  MziData _cacheData;
+  String? _typeUrl;
+  MziData? _cacheData;
 
-  void init({@required String typeUrl}) {
+  void init({required String typeUrl}) {
     _typeUrl = typeUrl;
     loadData(type: LoadType.NEW_LOAD);
   }
 
-  Future<void> loadData({@required LoadType type}) async {
+  Future<void> loadData({required LoadType type}) async {
     if (selfLoading) return;
-    if (_cacheData != null && _cacheData.page >= _cacheData.maxPage) return;
+    if (_cacheData != null && _cacheData!.page >= _cacheData!.maxPage) return;
 
     selfLoading = true;
     if (type != LoadType.REFRESH) {
@@ -30,7 +29,7 @@ class GiftMziViewModel extends ViewModel {
 
     try {
       final mziData = await _service.getImageList(
-          url: _typeUrl,
+          url: _typeUrl!,
           page: (type == LoadType.REFRESH || type == LoadType.NEW_LOAD)
               ? 1
               : (_cacheData?.page ?? 0) + 1);
@@ -40,10 +39,10 @@ class GiftMziViewModel extends ViewModel {
       } else {
         _cacheData?.page = mziData.page;
         _cacheData?.maxPage = mziData.maxPage;
-        _cacheData?.items?.addAll(mziData.items);
+        _cacheData?.items.addAll(mziData.items);
       }
 
-      data.add(_cacheData.items);
+      data.add(_cacheData!.items);
     } on DioError catch (e) {
       selfLoadType = type;
       doError(e);

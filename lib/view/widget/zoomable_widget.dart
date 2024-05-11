@@ -4,86 +4,75 @@ import 'package:flutter/material.dart';
 
 class ZoomableWidget extends StatefulWidget {
   ZoomableWidget({
-    Key key,
-    this.minScale: 0.7,
-    this.maxScale: 1.4,
-    this.enableZoom: true,
-    this.panLimit: 1.0,
-    this.singleFingerPan: true,
-    this.multiFingersPan: true,
-    this.enableRotate: false,
+    Key? key,
+    this.minScale = 0.7,
+    this.maxScale = 1.4,
+    this.enableZoom = true,
+    this.panLimit = 1.0,
+    this.singleFingerPan = true,
+    this.multiFingersPan = true,
+    this.enableRotate = false,
     this.child,
     this.onTap,
-    this.zoomSteps: 2,
-    this.autoCenter: false,
-    this.bounceBackBoundary: true,
-    this.enableFling: true,
-    this.flingFactor: 1.0,
+    this.zoomSteps = 2,
+    this.autoCenter = false,
+    this.bounceBackBoundary = true,
+    this.enableFling = true,
+    this.flingFactor = 1.0,
     this.onZoomChanged,
-    this.resetDuration: const Duration(milliseconds: 250),
-    this.resetCurve: Curves.easeInOut,
-  })  : assert(minScale != null),
-        assert(maxScale != null),
-        assert(enableZoom != null),
-        assert(panLimit != null),
-        assert(singleFingerPan != null),
-        assert(multiFingersPan != null),
-        assert(enableRotate != null),
-        assert(zoomSteps != null),
-        assert(autoCenter != null),
-        assert(bounceBackBoundary != null),
-        assert(enableFling != null),
-        assert(flingFactor != null);
+    this.resetDuration = const Duration(milliseconds: 250),
+    this.resetCurve = Curves.easeInOut,
+  });
 
-  /// The minimum size for scaling.
+  // The minimum size for scaling.
   final double minScale;
 
-  /// The maximum size for scaling.
+  // The maximum size for scaling.
   final double maxScale;
 
-  /// Allow zooming the child widget.
+  // Allow zooming the child widget.
   final bool enableZoom;
 
-  /// Allow panning with one finger.
+  // Allow panning with one finger.
   final bool singleFingerPan;
 
-  /// Allow panning with more than one finger.
+  // Allow panning with more than one finger.
   final bool multiFingersPan;
 
-  /// Allow rotating the [image].
+  // Allow rotating the [image].
   final bool enableRotate;
 
-  /// Create a boundary with the factor.
+  // Create a boundary with the factor.
   final double panLimit;
 
-  /// The child widget that is display.
-  final Widget child;
+  // The child widget that is display.
+  final Widget? child;
 
-  /// Tap callback for this widget.
-  final VoidCallback onTap;
+  // Tap callback for this widget.
+  final VoidCallback? onTap;
 
-  /// Allow users to zoom with double tap steps by steps.
+  // Allow users to zoom with double tap steps by steps.
   final int zoomSteps;
 
-  /// Center offset when zooming to minimum scale.
+  // Center offset when zooming to minimum scale.
   final bool autoCenter;
 
-  /// Enable the bounce-back boundary.
+  // Enable the bounce-back boundary.
   final bool bounceBackBoundary;
 
-  /// Allow fling child widget after panning.
+  // Allow fling child widget after panning.
   final bool enableFling;
 
-  /// Greater value create greater fling distance.
+  // Greater value create greater fling distance.
   final double flingFactor;
 
-  /// When the scale value changed, the callback will be invoked.
-  final ValueChanged<double> onZoomChanged;
+  // When the scale value changed, the callback will be invoked.
+  final ValueChanged<double>? onZoomChanged;
 
-  /// The duration of reset animation.
+  // The duration of reset animation.
   final Duration resetDuration;
 
-  /// The curve of reset animation.
+  // The curve of reset animation.
   final Curve resetCurve;
 
   @override
@@ -109,8 +98,8 @@ class _ZoomableWidgetState extends State<ZoomableWidget> {
 
   void _onScaleStart(ScaleStartDetails details) {
     if (_childSize == Size.zero) {
-      final RenderBox renderbox = _key.currentContext.findRenderObject();
-      _childSize = renderbox.size;
+      final RenderBox? renderbox = _key.currentContext?.findRenderObject() as RenderBox?;
+      _childSize = renderbox!.size;
     }
     setState(() {
       _zoomOriginOffset = details.focalPoint;
@@ -138,7 +127,7 @@ class _ZoomableWidgetState extends State<ZoomableWidget> {
       setState(() {
         _zoom = (_previousZoom * details.scale)
             .clamp(widget.minScale, widget.maxScale);
-        if (widget.onZoomChanged != null) widget.onZoomChanged(_zoom);
+        if (widget.onZoomChanged != null) widget.onZoomChanged!(_zoom);
       });
     }
     if ((widget.singleFingerPan && details.scale == 1.0) ||
@@ -182,7 +171,7 @@ class _ZoomableWidgetState extends State<ZoomableWidget> {
     final double magnitude = velocity.distance;
     if (magnitude > 800.0 * _zoom && widget.enableFling) {
       final Offset direction = velocity / magnitude;
-      final double distance = (Offset.zero & context.size).shortestSide;
+      final double distance = (Offset.zero & context.size!).shortestSide;
       final Offset endOffset =
           _panOffset + direction * distance * widget.flingFactor * 0.5;
       _panOffset = Offset(
@@ -228,7 +217,7 @@ class _ZoomableWidgetState extends State<ZoomableWidget> {
     if (_tmpZoom > widget.maxScale || _stepLength == 0.0) _tmpZoom = 1.0;
     setState(() {
       _zoom = _tmpZoom;
-      if (widget.onZoomChanged != null) widget.onZoomChanged(_zoom);
+      if (widget.onZoomChanged != null) widget.onZoomChanged!(_zoom);
     });
     setState(() => _panOffset = Offset.zero);
 
@@ -308,12 +297,12 @@ class _ZoomableWidgetLayout extends MultiChildLayoutDelegate {
 
 class _ZoomableChild extends ImplicitlyAnimatedWidget {
   const _ZoomableChild({
-    Duration duration,
+    required Duration duration,
     Curve curve = Curves.linear,
-    @required this.zoom,
-    @required this.panOffset,
-    @required this.rotation,
-    @required this.child,
+    required this.zoom,
+    required this.panOffset,
+    required this.rotation,
+    required this.child,
   }) : super(duration: duration, curve: curve);
 
   final double zoom;
@@ -327,33 +316,33 @@ class _ZoomableChild extends ImplicitlyAnimatedWidget {
 }
 
 class _ZoomableChildState extends AnimatedWidgetBaseState<_ZoomableChild> {
-  DoubleTween _zoom;
-  OffsetTween _panOffset;
-  OffsetTween _zoomOriginOffset;
-  DoubleTween _rotation;
+  DoubleTween? _zoom;
+  OffsetTween? _panOffset;
+  OffsetTween? _zoomOriginOffset;
+  DoubleTween? _rotation;
 
   @override
   void forEachTween(visitor) {
     _zoom = visitor(
-        _zoom, widget.zoom, (dynamic value) => DoubleTween(begin: value));
+        _zoom, widget.zoom, (dynamic value) => DoubleTween(begin: value)) as DoubleTween;
     _panOffset = visitor(_panOffset, widget.panOffset,
-        (dynamic value) => OffsetTween(begin: value));
+        (dynamic value) => OffsetTween(begin: value)) as OffsetTween;
     _rotation = visitor(_rotation, widget.rotation,
-        (dynamic value) => DoubleTween(begin: value));
+        (dynamic value) => DoubleTween(begin: value)) as DoubleTween;
   }
 
   @override
   Widget build(BuildContext context) {
     return Transform(
       alignment: Alignment.center,
-      origin: Offset(-_panOffset.evaluate(animation).dx,
-          -_panOffset.evaluate(animation).dy),
+      origin: Offset(-_panOffset!.evaluate(animation).dx,
+          -_panOffset!.evaluate(animation).dy),
       transform: Matrix4.identity()
-        ..translate(_panOffset.evaluate(animation).dx,
-            _panOffset.evaluate(animation).dy)
-        ..scale(_zoom.evaluate(animation), _zoom.evaluate(animation)),
+        ..translate(_panOffset!.evaluate(animation).dx,
+            _panOffset!.evaluate(animation).dy)
+        ..scale(_zoom!.evaluate(animation), _zoom!.evaluate(animation)),
       child: Transform.rotate(
-        angle: _rotation.evaluate(animation),
+        angle: _rotation!.evaluate(animation),
         child: widget.child,
       ),
     );
@@ -361,15 +350,15 @@ class _ZoomableChildState extends AnimatedWidgetBaseState<_ZoomableChild> {
 }
 
 class DoubleTween extends Tween<double> {
-  DoubleTween({double begin, double end}) : super(begin: begin, end: end);
+  DoubleTween({double? begin, double? end}) : super(begin: begin, end: end);
 
   @override
-  double lerp(double t) => (begin + (end - begin) * t);
+  double lerp(double t) => (begin! + (end! - begin!) * t);
 }
 
 class OffsetTween extends Tween<Offset> {
-  OffsetTween({Offset begin, Offset end}) : super(begin: begin, end: end);
+  OffsetTween({Offset? begin, Offset? end}) : super(begin: begin, end: end);
 
   @override
-  Offset lerp(double t) => (begin + (end - begin) * t);
+  Offset lerp(double t) => (begin! + (end! - begin!) * t);
 }

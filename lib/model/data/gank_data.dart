@@ -1,15 +1,13 @@
 class GankTitle {
-  String sId;
-  String coverImageUrl;
-  String desc;
-  String title;
-  String type;
+  String? sId;
+  String? coverImageUrl;
+  String? desc;
+  String? title;
+  String? type;
 
   GankTitle({this.sId, this.coverImageUrl, this.desc, this.title, this.type});
 
   GankTitle.fromJson(Map<String, dynamic> json) {
-    if (json == null) return;
-
     sId = json['_id'];
     coverImageUrl = json['coverImageUrl'];
     desc = json['desc'];
@@ -29,22 +27,20 @@ class GankTitle {
 }
 
 class GankData {
-  List<GankItem> data;
-  int page;
-  int pageCount;
-  int status;
-  int totalCounts;
+  List<GankItem>? data;
+  int? page;
+  int? pageCount;
+  int? status;
+  int? totalCounts;
 
   GankData(
       {this.data, this.page, this.pageCount, this.status, this.totalCounts});
 
   GankData.fromJson(Map<String, dynamic> json) {
-    if (json == null) return;
-
     if (json['data'] != null) {
-      data = List<GankItem>();
+      data = <GankItem>[];
       json['data'].forEach((v) {
-        data.add(GankItem.fromJson(v));
+        data!.add(GankItem.fromJson(v));
       });
     }
     page = json['page'];
@@ -56,7 +52,7 @@ class GankData {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
     if (this.data != null) {
-      data['data'] = this.data.map((v) => v?.toJson()).toList();
+      data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
     data['page'] = this.page;
     data['page_count'] = this.pageCount;
@@ -67,19 +63,19 @@ class GankData {
 }
 
 class GankItem {
-  String sId;
-  String author;
-  String category;
-  String createdAt;
-  String desc;
-  List<String> images;
-  int likeCounts;
-  String publishedAt;
-  int stars;
-  String title;
-  String type;
-  String url;
-  int views;
+  String? sId;
+  String? author;
+  String? category;
+  String? createdAt;
+  String? desc;
+  List<String>? images;
+  int? likeCounts;
+  String? publishedAt;
+  int? stars;
+  String? title;
+  String? type;
+  String? url;
+  int? views;
 
   GankItem(
       {this.sId,
@@ -97,8 +93,6 @@ class GankItem {
       this.views});
 
   GankItem.fromJson(Map<String, dynamic> json) {
-    if (json == null) return;
-
     sId = json['_id'];
     author = json['author'];
     category = json['category'];

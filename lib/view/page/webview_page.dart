@@ -1,4 +1,4 @@
-import 'package:esys_flutter_share/esys_flutter_share.dart';
+// import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_weather/generated/i18n.dart';
@@ -7,26 +7,26 @@ import 'package:flutter_weather/utils/system_util.dart';
 import 'package:flutter_weather/view/page/page_state.dart';
 import 'package:flutter_weather/view/widget/custom_app_bar.dart';
 import 'package:flutter_weather/view/widget/loading_view.dart';
-import 'package:flutter_weather/viewmodel/web_viewmodel.dart';
+import 'package:flutter_weather/viewmodel/web_viewModel.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class CustomWebViewPage<T> extends StatefulWidget {
   final String title;
   final String url;
 
-  /// 收藏时保存在本地的数据
+  // 收藏时保存在本地的数据
   final T favData;
 
   CustomWebViewPage(
-      {@required this.title, @required this.url, @required this.favData});
+      {required this.title, required this.url, required this.favData});
 
   @override
   State createState() => CustomWebViewState();
 }
 
 class CustomWebViewState<T> extends PageState<CustomWebViewPage> {
-  WebViewModel _viewModel;
-  WebViewController _controller;
+  WebViewModel? _viewModel;
+  WebViewController? _controller;
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class CustomWebViewState<T> extends PageState<CustomWebViewPage> {
 
   @override
   void dispose() {
-    _viewModel.dispose();
+    _viewModel!.dispose();
 
     super.dispose();
   }
@@ -57,15 +57,15 @@ class CustomWebViewState<T> extends PageState<CustomWebViewPage> {
               fontSize: 16,
             ),
           ),
-          color: Theme.of(context).accentColor,
+          color: Theme.of(context).primaryColor,
           leftBtn: IconButton(
             icon: Icon(
               Icons.arrow_back,
               color: Colors.white,
             ),
             onPressed: () async {
-              if (_controller != null && await _controller.canGoBack()) {
-                _controller.goBack();
+              if (_controller != null && await _controller!.canGoBack()) {
+                _controller!.goBack();
               } else {
                 pop(context);
               }
@@ -74,14 +74,14 @@ class CustomWebViewState<T> extends PageState<CustomWebViewPage> {
           rightBtns: [
             widget.favData != null
                 ? StreamBuilder(
-                    stream: _viewModel.isFav.stream,
+                    stream: _viewModel!.isFav.stream,
                     initialData: false,
                     builder: (context, snapshot) {
                       final isFav = snapshot.data;
 
                       return IconButton(
                         icon: Icon(
-                          isFav ? Icons.favorite : Icons.favorite_border,
+                          isFav! ? Icons.favorite : Icons.favorite_border,
                           color: isFav ? Colors.red : Colors.white,
                         ),
                         onPressed: () => FavHolder().autoFav(widget.favData),
@@ -97,19 +97,19 @@ class CustomWebViewState<T> extends PageState<CustomWebViewPage> {
               itemBuilder: (context) => [
                 PopupMenuItem(
                   value: "refresh",
-                  child: Text(S.of(context).refresh),
+                  child: Text(S.of(context)?.refresh ?? ''),
                 ),
                 PopupMenuItem(
                   value: "share",
-                  child: Text(S.of(context).share),
+                  child: Text(S.of(context)?.share ?? ''),
                 ),
                 PopupMenuItem(
                   value: "copy",
-                  child: Text(S.of(context).copyUrl),
+                  child: Text(S.of(context)?.copyUrl ?? ''),
                 ),
                 PopupMenuItem(
                   value: "openByOther",
-                  child: Text(S.of(context).openByOtherWay),
+                  child: Text(S.of(context)?.openByOtherWay ?? ''),
                 ),
               ],
               onSelected: (value) {
@@ -118,12 +118,13 @@ class CustomWebViewState<T> extends PageState<CustomWebViewPage> {
                     _controller?.reload();
                     break;
                   case "share":
-                    Share.text(S.of(context).share,
-                        "${widget.title}\n${widget.url}", "text/plain");
+                  // TODO:
+                    // Share.text(S.of(context)?.share,
+                    //     "${widget.title}\n${widget.url}", "text/plain");
                     break;
                   case "copy":
                     Clipboard.setData(ClipboardData(text: widget.url));
-                    showSnack(text: S.of(context).alreadyCopyUrl);
+                    showSnack(text: S.of(context)?.alreadyCopyUrl ?? '');
                     break;
                   case "openByOther":
                     openBrowser(widget.url);
@@ -134,18 +135,20 @@ class CustomWebViewState<T> extends PageState<CustomWebViewPage> {
           ],
         ),
         body: LoadingView(
-          loadingStream: _viewModel.isLoading.stream,
-          child: WebView(
-            initialUrl: "${widget.url}",
-            onWebViewCreated: (controller) => _controller = controller,
-            onPageFinished: (_) => _viewModel.setLoading(false),
-            javascriptMode: JavascriptMode.unrestricted,
-          ),
+          loadingStream: _viewModel!.isLoading.stream,
+          // TODO:
+          child: Text('TODO: WebView'),
+          // child: WebView(
+          //   initialUrl: "${widget.url}",
+          //   onWebViewCreated: (controller) => _controller = controller,
+          //   onPageFinished: (_) => _viewModel!.setLoading(false),
+          //   javascriptMode: JavascriptMode.unrestricted,
+          // ),
         ),
       ),
       onWillPop: () async {
-        if (_controller != null && await _controller.canGoBack()) {
-          _controller.goBack();
+        if (_controller != null && await _controller!.canGoBack()) {
+          _controller!.goBack();
         } else {
           pop(context);
         }

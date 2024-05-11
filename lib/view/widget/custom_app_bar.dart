@@ -3,18 +3,18 @@ import 'package:flutter_weather/utils/system_util.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget title;
-  final Widget centerTitle;
-  final PreferredSizeWidget bottom;
-  final IconButton leftBtn;
+  final Widget? centerTitle;
+  final PreferredSizeWidget? bottom;
+  final IconButton? leftBtn;
   final List<Widget> rightBtns;
   final Color color;
   final bool showShadow;
 
   CustomAppBar(
-      {Key key,
-      @required this.title,
+      {Key? key,
+      required this.title,
       this.centerTitle,
-      @required this.color,
+      required this.color,
       this.leftBtn,
       this.bottom,
       this.rightBtns = const [],
@@ -53,5 +53,5 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize =>
-      Size.fromHeight(kToolbarHeight + (bottom?.preferredSize?.height ?? 0.0));
+      Size.fromHeight(kToolbarHeight + (bottom?.preferredSize.height ?? 0.0));
 }

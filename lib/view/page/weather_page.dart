@@ -15,10 +15,10 @@ import 'package:flutter_weather/view/picker/weather_share_picker.dart';
 import 'package:flutter_weather/view/weather/weather_view.dart';
 import 'package:flutter_weather/view/widget/custom_app_bar.dart';
 import 'package:flutter_weather/view/widget/weather_title_view.dart';
-import 'package:flutter_weather/viewmodel/weather_viewmodel.dart';
+import 'package:flutter_weather/viewmodel/weather_viewModel.dart';
 
 class WeatherPage extends StatefulWidget {
-  WeatherPage({Key key}) : super(key: key);
+  WeatherPage({required Key? key}) : super(key: key);
 
   @override
   State createState() => WeatherState();
@@ -41,23 +41,23 @@ class WeatherState extends PageState<WeatherPage> {
     super.initState();
 
     _controller.addListener(() {
-      _pageStream.safeAdd(_controller.page);
+      _pageStream.safeAdd(_controller.page!);
     });
   }
 
-  @override
-  void onPause() {
-    super.onPause();
+  // @override
+  // void onPause() {
+  //   super.onPause();
 
-    _viewModel.changeHideState(true);
-  }
+  //   _viewModel.changeHideState(true);
+  // }
 
-  @override
-  void onResume() {
-    super.onResume();
+  // @override
+  // void onResume() {
+  //   super.onResume();
 
-    _viewModel.changeHideState(false);
-  }
+  //   _viewModel.changeHideState(false);
+  // }
 
   @override
   void dispose() {
@@ -75,13 +75,15 @@ class WeatherState extends PageState<WeatherPage> {
     return StreamBuilder(
       stream: _viewModel.weather.stream,
       builder: (context, snapshot) {
-        final Pair<Weather, AirNowCity> pair = snapshot.data;
-        final type = pair?.a?.now?.condTxt ?? "";
+  print('weather_page 1');
+        final Pair<Weather, AirNowCity?> pair = snapshot.data ?? Pair(Weather(dailyForecast: []), AirNowCity());
+        final type = pair.a.now?.condTxt ?? "";
 
         return StreamBuilder(
           stream: _viewModel.cities.stream,
           builder: (context, snapshot) {
-            final List<String> cities = snapshot.data ?? [];
+  print('weather_page 2');
+            final List<String?> cities = snapshot.data ?? [];
 
             return StreamBuilder(
               stream: _pageStream.stream,
@@ -107,7 +109,7 @@ class WeatherState extends PageState<WeatherPage> {
                             children: <Widget>[
                               // 指示条
                               Opacity(
-                                opacity: 1 - alpha,
+                                opacity: 1 - alpha!,
                                 child: WeatherTitleView(
                                   cities: cities,
                                   pageValue: pageValue,
@@ -117,7 +119,7 @@ class WeatherState extends PageState<WeatherPage> {
                               // 标题栏
                               CustomAppBar(
                                 title: Text(
-                                  location,
+                                  location! + 'mf2',
                                   style: TextStyle(
                                     color: Colors.white.withOpacity(alpha),
                                     fontSize: 20,
@@ -140,28 +142,27 @@ class WeatherState extends PageState<WeatherPage> {
                                       color: Colors.white,
                                     ),
                                     itemBuilder: (context) => [
-                                      PopupMenuItem(
-                                        value: "share",
-                                        child: Text(S.of(context).share),
-                                      ),
+                                      // PopupMenuItem(
+                                      //   value: "share",
+                                      //   child: Text(S.of(context)?.share ?? ''),
+                                      // ),
                                       PopupMenuItem(
                                         value: "cities",
-                                        child: Text(S.of(context).cityControl),
+                                        child: Text(S.of(context)?.cityControl ?? ''),
                                       ),
-                                      PopupMenuItem(
-                                        value: "weathers",
-                                        child: Text(S.of(context).weathersView),
-                                      ),
+                                      // PopupMenuItem(
+                                      //   value: "weathers",
+                                      //   child: Text(S.of(context)?.weathersView ?? ''),
+                                      // ),
                                     ],
                                     onSelected: (value) {
                                       switch (value) {
                                         case "share":
-                                          if (pair?.a == null ||
-                                              pair?.b == null) return;
+                                          if (pair.b == null) return;
 
                                           WeatherSharePicker.share(context,
                                               weather: pair.a,
-                                              air: pair.b,
+                                              air: pair.b!,
                                               city: location);
                                           break;
                                         case "cities":
@@ -169,7 +170,7 @@ class WeatherState extends PageState<WeatherPage> {
                                               page: CityControlPage());
                                           break;
                                         case "weathers":
-                                          _showWeathersDialog();
+                                          // _showWeathersDialog();
                                           break;
                                       }
                                     },
@@ -187,12 +188,13 @@ class WeatherState extends PageState<WeatherPage> {
                     stream: _viewModel.hideWeather.stream,
                     initialData: false,
                     builder: (context, snapshot) {
+  print('weather_page 3');
                       final hideWeather = snapshot.data;
 
                       return WeatherView(
                         type: type,
                         color: _getAppBarColor(type: type),
-                        hide: hideWeather,
+                        hide: hideWeather!,
                         child: PageView.builder(
                           itemCount: cities.length,
                           controller: _controller,
@@ -236,8 +238,8 @@ class WeatherState extends PageState<WeatherPage> {
     );
   }
 
-  /// 获取Appbar的颜色
-  Color _getAppBarColor({@required String type}) {
+  // 根据天气类型获取 AppBar 的颜色
+  Color _getAppBarColor({required String type}) {
     final isDay = DateTime.now().hour >= 6 && DateTime.now().hour < 18;
 
     if (type.contains("晴") || type.contains("多云")) {
@@ -265,78 +267,78 @@ class WeatherState extends PageState<WeatherPage> {
     }
   }
 
-  /// 动态天气预览弹窗
-  void _showWeathersDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          S.of(context).weathersView,
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.black,
-          ),
-        ),
-        contentPadding: const EdgeInsets.only(),
-        titlePadding: const EdgeInsets.fromLTRB(20, 18, 0, 10),
-        content: SingleChildScrollView(
-          physics: const ClampingScrollPhysics(),
-          padding: const EdgeInsets.only(),
-          child: Column(
-            children: <Widget>[
-              _buildDialogItem(title: S.of(context).sunny),
-              _buildDialogItem(title: S.of(context).cloudy),
-              _buildDialogItem(title: S.of(context).overcast),
-              _buildDialogItem(title: S.of(context).rain),
-              _buildDialogItem(title: S.of(context).flashRain),
-              _buildDialogItem(title: S.of(context).snowRain),
-              _buildDialogItem(title: S.of(context).snow),
-              _buildDialogItem(title: S.of(context).hail),
-              _buildDialogItem(title: S.of(context).fog),
-              _buildDialogItem(title: S.of(context).smog),
-              _buildDialogItem(title: S.of(context).sandstorm),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  // // 动态天气预览弹窗
+  // void _showWeathersDialog() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: Text(
+  //         S.of(context)?.weathersView ?? '',
+  //         style: TextStyle(
+  //           fontSize: 20,
+  //           color: Colors.black,
+  //         ),
+  //       ),
+  //       contentPadding: const EdgeInsets.only(),
+  //       titlePadding: const EdgeInsets.fromLTRB(20, 18, 0, 10),
+  //       content: SingleChildScrollView(
+  //         physics: const ClampingScrollPhysics(),
+  //         padding: const EdgeInsets.only(),
+  //         child: Column(
+  //           children: <Widget>[
+  //             // _buildDialogItem(title: S.of(context)?.sunny ?? ''),
+  //             // _buildDialogItem(title: S.of(context)?.cloudy ?? ''),
+  //             // _buildDialogItem(title: S.of(context)?.overcast ?? ''),
+  //             // _buildDialogItem(title: S.of(context)?.rain ?? ''),
+  //             // _buildDialogItem(title: S.of(context)?.flashRain ?? ''),
+  //             // _buildDialogItem(title: S.of(context)?.snowRain ?? ''),
+  //             // _buildDialogItem(title: S.of(context)?.snow ?? ''),
+  //             // _buildDialogItem(title: S.of(context)?.hail ?? ''),
+  //             // _buildDialogItem(title: S.of(context)?.fog ?? ''),
+  //             // _buildDialogItem(title: S.of(context)?.smog ?? ''),
+  //             // _buildDialogItem(title: S.of(context)?.sandstorm ?? ''),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  /// 动态天气预览的选项
-  Widget _buildDialogItem({@required String title}) {
-    return Material(
-      color: Colors.white,
-      child: InkWell(
-        onTap: () {
-          pop(context);
-          _viewModel.switchType(title);
-        },
-        child: Container(
-          height: 48,
-          padding: const EdgeInsets.only(left: 20),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(right: 18),
-                child: Icon(
-                  Icons.panorama_fish_eye,
-                  color: Colors.black54,
-                ),
-              ),
-              Text(
-                title,
-                style: TextStyle(fontSize: 18, color: Colors.black),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  // // 动态天气预览的选项
+  // Widget _buildDialogItem({required String title}) {
+  //   return Material(
+  //     color: Colors.white,
+  //     child: InkWell(
+  //       onTap: () {
+  //         pop(context);
+  //         _viewModel.switchType(title);
+  //       },
+  //       child: Container(
+  //         height: 48,
+  //         padding: const EdgeInsets.only(left: 20),
+  //         child: Row(
+  //           crossAxisAlignment: CrossAxisAlignment.center,
+  //           children: <Widget>[
+  //             Padding(
+  //               padding: const EdgeInsets.only(right: 18),
+  //               child: Icon(
+  //                 Icons.panorama_fish_eye,
+  //                 color: Colors.black54,
+  //               ),
+  //             ),
+  //             Text(
+  //               title,
+  //               style: TextStyle(fontSize: 18, color: Colors.black),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  /// 改变天气动画显示状态
+  // 改变天气动画显示状态
   void changeHideState(bool hide) {
-    _viewModel.changeHideState(hide);
+    // _viewModel.changeHideState(hide);
   }
 }

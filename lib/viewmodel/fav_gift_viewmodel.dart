@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_weather/common/streams.dart';
 import 'package:flutter_weather/model/data/mzi_data.dart';
 import 'package:flutter_weather/model/holder/fav_holder.dart';
 import 'package:flutter_weather/viewmodel/viewmodel.dart';
@@ -9,11 +10,11 @@ class FavGiftViewModel extends ViewModel {
 
   FavGiftViewModel() {
     FavHolder()
-        .favMziStream
-        .listen((list) => data.safeAdd(list.where((v) => !v.isImages).toList()))
-        .bindLife(this);
+        .favMziStream!
+        .listen((list) => data.safeAdd(list.where((v) => !v.isImages!).toList()))
+        .bindLife(this as StreamSubController);
 
-    data.safeAdd(FavHolder().favMzis.where((v) => !v.isImages).toList());
+    data.safeAdd(FavHolder().favMzis.where((v) => !v.isImages!).toList());
   }
 
   @override

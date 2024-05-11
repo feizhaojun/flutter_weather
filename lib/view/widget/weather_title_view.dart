@@ -6,10 +6,10 @@ import 'package:flutter_weather/utils/system_util.dart';
 
 /// 天气界面的滚动标题
 class WeatherTitleView extends StatefulWidget {
-  final List<String> cities;
+  final List<String?> cities;
   final double pageValue;
 
-  WeatherTitleView({@required this.cities, @required this.pageValue});
+  WeatherTitleView({required this.cities, required this.pageValue});
 
   @override
   State createState() {
@@ -19,10 +19,10 @@ class WeatherTitleView extends StatefulWidget {
 
 class _WeatherTitleState extends State<WeatherTitleView> {
   final _paddingLeft = StreamController<double>();
-  final _titleKeys = List<GlobalKey>();
-  final _titleWidth = List<double>();
+  final _titleKeys = <GlobalKey>[];
+  final _titleWidth = <double>[];
 
-  Timer _timer;
+  Timer? _timer;
   double _currentPadding = 0;
 
   @override
@@ -100,7 +100,7 @@ class _WeatherTitleState extends State<WeatherTitleView> {
                   stream: _paddingLeft.stream,
                   initialData: _currentPadding,
                   builder: (context, snapshot) {
-                    final left = getScreenWidth(context) / 2 + snapshot.data;
+                    final left = getScreenWidth(context) / 2 + snapshot.data!;
 
                     return Positioned(
                       child: Row(
@@ -116,7 +116,7 @@ class _WeatherTitleState extends State<WeatherTitleView> {
                                 ? value
                                 : 0,
                             child: Text(
-                              "${cities[index]}",
+                              " ${cities[index]} ",
                               key: _titleKeys[index],
                               style:
                                   TextStyle(fontSize: 18, color: Colors.white),
@@ -166,19 +166,19 @@ class _WeatherTitleState extends State<WeatherTitleView> {
     );
   }
 
-  /// 计算每个标题宽度
+  // 计算每个标题宽度
   void _calculateWidth() {
     _titleKeys.clear();
     _titleKeys.addAll(widget.cities.map((_) => GlobalKey()));
     _timer?.cancel();
     _timer = Timer(const Duration(milliseconds: 100), () {
       _titleWidth.clear();
-      _titleWidth.addAll(_titleKeys.map((v) => v.currentContext.size.width));
+      _titleWidth.addAll(_titleKeys.map((v) => v.currentContext!.size!.width));
       _initPadding();
     });
   }
 
-  /// 计算左边距
+  // 计算左边距
   void _initPadding() {
     if (_titleWidth.isEmpty) return;
 

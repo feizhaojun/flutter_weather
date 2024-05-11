@@ -4,14 +4,14 @@ import 'package:flutter_weather/model/data/gank_data.dart';
 import 'package:flutter_weather/view/page/page_state.dart';
 import 'package:flutter_weather/view/widget/loading_view.dart';
 import 'package:flutter_weather/view/widget/read_item_view.dart';
-import 'package:flutter_weather/viewmodel/gank_viewmodel.dart';
+import 'package:flutter_weather/viewmodel/gank_viewModel.dart';
 import 'package:flutter_weather/viewmodel/viewmodel.dart';
 
 class ReadContentPage extends StatefulWidget {
   final GankTitle title;
   final bool isGanHuo;
 
-  ReadContentPage({Key key, @required this.title, this.isGanHuo = false})
+  ReadContentPage({Key? key, required this.title, this.isGanHuo = false})
       : super(key: key);
 
   @override
@@ -41,12 +41,12 @@ class ReadContentState extends PageState<ReadContentPage>
     _viewModel
       ..init(
           category: widget.isGanHuo ? "GanHuo" : "Article",
-          type: widget.title.type)
+          type: widget.title.type!)
       ..error
           .stream
           .where((b) => b)
           .listen((_) => networkError(
-              errorText: S.of(context).readLoadFail(widget.title.title),
+              errorText: S.of(context)?.readLoadFail(widget.title.title!),
               retry: _viewModel.reload))
           .bindLife(this);
   }

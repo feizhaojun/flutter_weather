@@ -1,6 +1,8 @@
+// 迁移到 views/screens/home_page.dart
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_weather/utils/system_util.dart';
 import 'package:flutter_weather/common/colors.dart';
 import 'package:flutter_weather/generated/i18n.dart';
 import 'package:flutter_weather/model/data/page_module_data.dart';
@@ -9,7 +11,6 @@ import 'package:flutter_weather/model/holder/event_send_holder.dart';
 import 'package:flutter_weather/model/holder/fav_holder.dart';
 import 'package:flutter_weather/model/holder/shared_depository.dart';
 import 'package:flutter_weather/model/holder/weather_holder.dart';
-import 'package:flutter_weather/utils/system_util.dart';
 import 'package:flutter_weather/view/page/about_page.dart';
 import 'package:flutter_weather/view/page/fav_page.dart';
 import 'package:flutter_weather/view/page/ganhuo_page.dart';
@@ -26,7 +27,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomeState extends PageState<HomePage> {
-  /// 标识有效页面
+  // 标识有效页面
   final _pageTypeMap = {
     PageType.WEATHER: false,
     PageType.READ: false,
@@ -34,32 +35,36 @@ class HomeState extends PageState<HomePage> {
     PageType.COLLECT: false,
     PageType.GANHUO: false,
   };
-  final _weatherKey = GlobalKey<WeatherState>();
-  final _pageModules = List<PageModule>();
+  final _weatherKey = GlobalKey<WeatherState>(); // TODO:
+  final List<dynamic> _pageModules = [];
 
-  /// 当前显示页面
-  PageType _currentPage;
-  bool _readyExit = false;
-  Timer _exitTimer;
+  /// 界面列表
+
+  // 当前显示页面
+  PageType? _currentPage; // TODO:
+  bool _readyExit = false; // TODO:
+  Timer? _exitTimer; // TODO:
 
   @override
   void initState() {
     super.initState();
 
+    // TODO:
     AppVersionHolder().checkUpdate(context);
 
+    // TODO:
     EventSendHolder()
-        .event
+        .event!
         .where((pair) => pair.a == "homeDrawerOpen")
         .listen((pair) {
       if (pair.b) {
-        scafKey.currentState.openDrawer();
+        scafKey.currentState!.openDrawer();
       } else {
         pop(context);
       }
     }).bindLife(this);
 
-    // 首次进入清除缓存
+    // TODO: 首次进入清除缓存
     if (SharedDepository().shouldClean) {
       DefaultCacheManager().emptyCache();
       SharedDepository().setsShouldClean(false);
@@ -80,166 +85,152 @@ class HomeState extends PageState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      child: Scaffold(
-        key: scafKey,
-        drawer: Drawer(
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(
-                parent: const ClampingScrollPhysics()),
-            padding: const EdgeInsets.only(),
-            children: <Widget>[
-              // 顶部图片
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Image.asset("images/drawer_bg.png"),
-              ),
-
-              // 主要页面选项
-              Column(
-                children: _pageModules
-                    .where((v) => v.open)
-                    .map((v) => v.page)
-                    .map((page) {
-                  switch (page) {
-                    // 天气
-                    case PageType.WEATHER:
-                      return _buildDrawerItem(
-                          icon: Icons.wb_sunny,
-                          title: S.of(context).weather,
-                          isTarget: _currentPage == page,
-                          onTap: () {
-                            if (_currentPage == page) return;
-
-                            _weatherKey.currentState?.changeHideState(false);
-                            setState(() {
-                              _currentPage = page;
-                              _pageTypeMap[page] = true;
-                            });
+    return Scaffold(
+      key: scafKey,
+      drawer: Drawer(
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(
+              parent: const ClampingScrollPhysics()),
+          padding: const EdgeInsets.only(),
+          children: <Widget>[
+            // 顶部图片
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Image.asset("images/drawer_bg.png"),
+            ),
+    
+            // 主要页面选项
+            Column(
+              children: _pageModules
+                  .where((v) => v.open!)
+                  .map((v) => v.page)
+                  .map((page) {
+                switch (page) {
+                  // 天气
+                  case PageType.WEATHER:
+                    return _buildDrawerItem(
+                        icon: Icons.wb_sunny,
+                        title: S.of(context)!.weather,
+                        isTarget: _currentPage == page,
+                        onTap: () {
+                          if (_currentPage == page) return;
+    
+                          _weatherKey.currentState?.changeHideState(false);
+                          setState(() {
+                            _currentPage = page;
+                            _pageTypeMap[page] = true;
                           });
-
-                    // 福利
-                    case PageType.GIFT:
-                      return _buildDrawerItem(
-                          icon: Icons.card_giftcard,
-                          title: S.of(context).gift,
-                          isTarget: _currentPage == page,
-                          onTap: () {
-                            if (_currentPage == page) return;
-
-                            _weatherKey.currentState?.changeHideState(true);
-                            setState(() {
-                              _currentPage = page;
-                              _pageTypeMap[page] = true;
-                            });
+                        });
+    
+                  // 福利
+                  case PageType.GIFT:
+                    return _buildDrawerItem(
+                        icon: Icons.card_giftcard,
+                        title: S.of(context)!.gift,
+                        isTarget: _currentPage == page,
+                        onTap: () {
+                          if (_currentPage == page) return;
+    
+                          _weatherKey.currentState?.changeHideState(true);
+                          setState(() {
+                            _currentPage = page;
+                            _pageTypeMap[page] = true;
                           });
-
-                    // 闲读
-                    case PageType.READ:
-                      return _buildDrawerItem(
-                          icon: Icons.local_cafe,
-                          title: S.of(context).read,
-                          isTarget: _currentPage == page,
-                          onTap: () {
-                            if (_currentPage == page) return;
-
-                            _weatherKey.currentState?.changeHideState(true);
-                            setState(() {
-                              _currentPage = page;
-                              _pageTypeMap[page] = true;
-                            });
+                        });
+    
+                  // 闲读
+                  case PageType.READ:
+                    return _buildDrawerItem(
+                        icon: Icons.local_cafe,
+                        title: S.of(context)!.read,
+                        isTarget: _currentPage == page,
+                        onTap: () {
+                          if (_currentPage == page) return;
+    
+                          _weatherKey.currentState?.changeHideState(true);
+                          setState(() {
+                            _currentPage = page;
+                            _pageTypeMap[page] = true;
                           });
-
-                    // 干货
-                    case PageType.GANHUO:
-                      return _buildDrawerItem(
-                          icon: Icons.android,
-                          title: S.of(context).ganHuo,
-                          isTarget: _currentPage == page,
-                          onTap: () {
-                            if (_currentPage == page) return;
-
-                            _weatherKey.currentState?.changeHideState(true);
-                            setState(() {
-                              _currentPage = page;
-                              _pageTypeMap[page] = true;
-                            });
+                        });
+    
+                  // 干货
+                  case PageType.GANHUO:
+                    return _buildDrawerItem(
+                        icon: Icons.android,
+                        title: S.of(context)!.ganHuo,
+                        isTarget: _currentPage == page,
+                        onTap: () {
+                          if (_currentPage == page) return;
+    
+                          _weatherKey.currentState?.changeHideState(true);
+                          setState(() {
+                            _currentPage = page;
+                            _pageTypeMap[page] = true;
                           });
-
-                    // 闲读
-                    case PageType.COLLECT:
-                      return _buildDrawerItem(
-                          icon: Icons.favorite_border,
-                          title: S.of(context).collect,
-                          isTarget: _currentPage == page,
-                          onTap: () {
-                            if (_currentPage == page) return;
-
-                            _weatherKey.currentState?.changeHideState(true);
-                            setState(() {
-                              _currentPage = page;
-                              _pageTypeMap[page] = true;
-                            });
+                        });
+    
+                  // 闲读
+                  case PageType.COLLECT:
+                    return _buildDrawerItem(
+                        icon: Icons.favorite_border,
+                        title: S.of(context)!.collect,
+                        isTarget: _currentPage == page,
+                        onTap: () {
+                          if (_currentPage == page) return;
+    
+                          _weatherKey.currentState?.changeHideState(true);
+                          setState(() {
+                            _currentPage = page;
+                            _pageTypeMap[page] = true;
                           });
+                        });
+                }
+    
+                return Container();
+              }).toList(),
+            ),
+    
+            // 分割线
+            Divider(color: AppColor.line),
+    
+            // 设置
+            _buildDrawerItem(
+                icon: Icons.settings,
+                title: S.of(context)?.setting ?? '',
+                isTarget: false,
+                onTap: () async {
+                  _weatherKey.currentState?.changeHideState(true);
+                  await push(context, page: SettingPage());
+                  if (_currentPage == PageType.WEATHER) {
+                    _weatherKey.currentState?.changeHideState(false);
                   }
-
-                  return Container();
-                }).toList(),
-              ),
-
-              // 分割线
-              Divider(color: AppColor.line),
-
-              // 设置
-              _buildDrawerItem(
-                  icon: Icons.settings,
-                  title: S.of(context).setting,
-                  isTarget: false,
-                  onTap: () async {
-                    _weatherKey.currentState?.changeHideState(true);
-                    await push(context, page: SettingPage());
-                    if (_currentPage == PageType.WEATHER) {
-                      _weatherKey.currentState?.changeHideState(false);
-                    }
-
-                    /// 导航栏功能可能会改变
-                    _moduleChanged();
-                  }),
-
-              // 关于
-              _buildDrawerItem(
-                  icon: Icons.error_outline,
-                  title: S.of(context).about,
-                  isTarget: false,
-                  onTap: () async {
-                    _weatherKey.currentState?.changeHideState(true);
-                    await push(context, page: AboutPage());
-                    if (_currentPage == PageType.WEATHER) {
-                      _weatherKey.currentState?.changeHideState(false);
-                    }
-                  }),
-            ],
-          ),
+    
+                  // 导航栏功能可能会改变
+                  _moduleChanged();
+                }),
+    
+            // 关于
+            _buildDrawerItem(
+                icon: Icons.error_outline,
+                title: S.of(context)?.about ?? '',
+                isTarget: false,
+                onTap: () async {
+                  _weatherKey.currentState?.changeHideState(true);
+                  await push(context, page: AboutPage());
+                  if (_currentPage == PageType.WEATHER) {
+                    _weatherKey.currentState?.changeHideState(false);
+                  }
+                }),
+          ],
         ),
-        body: _buildBody(),
       ),
-      onWillPop: () async {
-        if (_readyExit) {
-          exitApp();
-        } else {
-          _readyExit = true;
-          _exitTimer =
-              Timer(const Duration(seconds: 2), () => _readyExit = false);
-          showSnack(text: S.of(context).retryToExit);
-        }
-
-        return false;
-      },
+      body: _buildBody(),
     );
   }
 
-  /// 利用[IndexedStack]和[TickerMode]配合实现懒加载
-  /// 当所有页面关闭时显示占位图片
+  // 利用[IndexedStack]和[TickerMode]配合实现懒加载
+  // 当所有页面关闭时显示占位图片
   Widget _buildBody() {
     return _currentPage != null
         ? Stack(
@@ -249,7 +240,7 @@ class HomeState extends PageState<HomePage> {
                 offstage: _currentPage != PageType.WEATHER,
                 child: TickerMode(
                   enabled: _currentPage == PageType.WEATHER,
-                  child: _pageTypeMap[PageType.WEATHER]
+                  child: _pageTypeMap[PageType.WEATHER]!
                       ? WeatherPage(key: _weatherKey)
                       : Container(),
                 ),
@@ -260,7 +251,8 @@ class HomeState extends PageState<HomePage> {
                 offstage: _currentPage != PageType.GIFT,
                 child: TickerMode(
                   enabled: _currentPage == PageType.GIFT,
-                  child: _pageTypeMap[PageType.GIFT] ? GiftPage() : Container(),
+                  child:
+                      _pageTypeMap[PageType.GIFT]! ? GiftPage() : Container(),
                 ),
               ),
 
@@ -269,7 +261,8 @@ class HomeState extends PageState<HomePage> {
                 offstage: _currentPage != PageType.READ,
                 child: TickerMode(
                   enabled: _currentPage == PageType.READ,
-                  child: _pageTypeMap[PageType.READ] ? ReadPage() : Container(),
+                  child:
+                      _pageTypeMap[PageType.READ]! ? ReadPage() : Container(),
                 ),
               ),
 
@@ -278,7 +271,7 @@ class HomeState extends PageState<HomePage> {
                 offstage: _currentPage != PageType.GANHUO,
                 child: TickerMode(
                   enabled: _currentPage == PageType.GANHUO,
-                  child: _pageTypeMap[PageType.GANHUO]
+                  child: _pageTypeMap[PageType.GANHUO]!
                       ? GanHuoPage()
                       : Container(),
                 ),
@@ -290,7 +283,7 @@ class HomeState extends PageState<HomePage> {
                 child: TickerMode(
                   enabled: _currentPage == PageType.COLLECT,
                   child:
-                      _pageTypeMap[PageType.COLLECT] ? FavPage() : Container(),
+                      _pageTypeMap[PageType.COLLECT]! ? FavPage() : Container(),
                 ),
               ),
             ],
@@ -300,12 +293,16 @@ class HomeState extends PageState<HomePage> {
           );
   }
 
-  /// drawer的每个可点击选项
+  // drawer的每个可点击选项
   Widget _buildDrawerItem(
-      {@required IconData icon,
-      @required String title,
-      @required bool isTarget,
-      @required VoidCallback onTap}) {
+      // {required IconData icon,
+      // required String title,
+      // required bool isTarget,
+      // required VoidCallback onTap}) {
+      {required IconData icon,
+      required String title,
+      required bool isTarget,
+      required VoidCallback onTap}) {
     return Material(
       child: InkWell(
         onTap: () {
@@ -323,7 +320,7 @@ class HomeState extends PageState<HomePage> {
               Icon(
                 icon,
                 color:
-                    isTarget ? Theme.of(context).accentColor : AppColor.text2,
+                    isTarget ? Theme.of(context).primaryColor : AppColor.text2,
               ),
               Container(
                 margin: const EdgeInsets.only(left: 30),
@@ -331,8 +328,9 @@ class HomeState extends PageState<HomePage> {
                   title,
                   style: TextStyle(
                     fontSize: 14,
-                    color:
-                        isTarget ? Theme.of(context).accentColor : Colors.black,
+                    color: isTarget
+                        ? Theme.of(context).primaryColor
+                        : Colors.black,
                   ),
                 ),
               ),
@@ -351,10 +349,10 @@ class HomeState extends PageState<HomePage> {
 
     // 优先显示天气
     int index =
-        _pageModules.indexWhere((v) => v.page == PageType.WEATHER && v.open);
+        _pageModules.indexWhere((v) => v.page == PageType.WEATHER && v.open!);
     if (index == -1) {
       // 当天气功能被关闭时，显示第一个未被关闭的界面
-      index = _pageModules.indexWhere((v) => v.open);
+      index = _pageModules.indexWhere((v) => v.open!);
     }
 
     if (index != -1) {
@@ -363,7 +361,7 @@ class HomeState extends PageState<HomePage> {
     }
   }
 
-  /// 当页面顺序改变时调用
+  // 当页面顺序改变时调用
   void _moduleChanged() {
     if (_pageModules == SharedDepository().pageModules) return;
 
@@ -371,19 +369,18 @@ class HomeState extends PageState<HomePage> {
       _pageModules
         ..clear()
         ..addAll(SharedDepository().pageModules)
-        ..where((v) => !v.open).map((v) => v.page).forEach((page) {
+        ..where((v) => !v.open!).map((v) => v.page).forEach((page) {
           // 如果当前页面被关闭，就重新寻找显示的页面
           if (_currentPage == page) {
-            _currentPage = null;
+            _currentPage = null!;
           }
           _pageTypeMap[page] = false;
         });
 
       if (_currentPage == null) {
-        _currentPage =
-            _pageModules.firstWhere((v) => v.open, orElse: () => null)?.page;
+        _currentPage = _pageModules.firstWhere((v) => v.open!).page;
         if (_currentPage != null) {
-          _pageTypeMap[_currentPage] = true;
+          _pageTypeMap[_currentPage!] = true;
         }
       }
     });

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_weather/common/streams.dart';
 import 'package:flutter_weather/model/data/mzi_data.dart';
 import 'package:flutter_weather/model/holder/fav_holder.dart';
 import 'package:flutter_weather/model/service/gift_mzi_service.dart';
@@ -14,17 +14,17 @@ class GiftMziImageViewModel extends ViewModel {
   final photoStream = StreamController<List<MziItem>>();
 
   final _service = GiftMziService();
-  final _cacheData = List<MziItem>();
+  final _cacheData = <MziItem>[];
 
-  MziItem _mziData;
+  MziItem? _mziData;
 
-  GiftMziImageViewModel({@required MziItem data}) {
+  GiftMziImageViewModel({required MziItem data}) {
     _mziData = data;
 
     FavHolder()
-        .favMziStream
+        .favMziStream!
         .listen((_) => isFav.safeAdd(FavHolder().isFavorite(data)))
-        .bindLife(this);
+        .bindLife(this as StreamSubController);
 
     isFav.safeAdd(FavHolder().isFavorite(data));
   }
@@ -35,12 +35,12 @@ class GiftMziImageViewModel extends ViewModel {
     selfLoading = true;
     isLoading.safeAdd(true);
     try {
-      final length = await _service.getLength(link: _mziData.link);
+      final length = await _service.getLength(link: _mziData!.link!);
       dataLength.safeAdd(length);
 
       for (int i = _cacheData.length + 1; i <= length; i++) {
         _cacheData
-            .add(await _service.getEachData(link: _mziData.link, index: i));
+            .add(await _service.getEachData(link: _mziData!.link!, index: i));
 
         data.safeAdd(_cacheData);
         photoStream.safeAdd(_cacheData);

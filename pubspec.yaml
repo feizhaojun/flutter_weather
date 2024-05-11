@@ -1,38 +1,42 @@
 name: flutter_weather
-description: Flutter版假装看天气
-version: 1.4.0+18
+description: 小鸭天气
+version: 1.0.0
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
+  sdk: ">=3.3.2 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  cupertino_icons: 0.1.2
-  dio: 3.0.9
-  shared_preferences: 0.5.3+1
-  device_info: 0.4.0+2
-  intl: 0.17.0
-  url_launcher: 5.0.5
-  cached_network_image: 2.2.0+1
-  connectivity: 0.4.3+4
-  permission_handler: 3.1.0
-  package_info: 0.4.0+4
-  rxdart:  0.24.0
-  html: 0.14.0+2
-  webview_flutter: 0.3.21
-  flutter_colorpicker: 0.2.6
-  dragable_flutter_list: 1.0.2
-  flutter_linkify: 2.1.0
-  image_gallery_saver: 1.2.2
-  esys_flutter_share: 1.0.2
-  csv: 4.0.3
-  flutter_staggered_grid_view: 0.3.0
-  retry: 3.0.0+1
-  wallpaper_manager: 1.0.10
-
+  cupertino_icons: ^1.0.6
+  dio: ^5.4.2+1
+  shared_preferences: ^2.2.2 # 轻量级本地键值对存储，可以缓存数据
+  geolocator: ^11.0.0 # 位置服务
+  flutter_cache_manager: ^3.3.1
+  # device_info: ^2.0.3
+  intl: ^0.18.1
+  url_launcher: ^6.2.5
+  # cached_network_image: ^3.3.1
+  # connectivity: ^3.0.6
+  connectivity_plus: ^6.0.3
+  permission_handler: ^11.3.1
+  # package_info: ^2.0.2
+  rxdart: ^0.27.7
+  html: ^0.15.4
+  webview_flutter: ^4.7.0
+  flutter_colorpicker: ^1.0.3
+  # dragable_flutter_list: 1.0.2
+  flutter_reorderable_list: ^1.3.1
+  flutter_linkify: ^6.0.0
+  # image_gallery_saver: ^2.0.3
+  # esys_flutter_share: 1.0.2
+  csv: ^6.0.0
+  flutter_staggered_grid_view: ^0.7.0
+  retry: ^3.1.2
+  # wallpaper_manager: ^1.0.10
+  # path_provider: ^2.1.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -41,73 +45,44 @@ flutter:
   uses-material-design: true
   assets:
     # 图片
-    - images/100.png
-    - images/101.png
-    - images/102.png
-    - images/103.png
-    - images/104.png
-    - images/200.png
-    - images/201.png
-    - images/202.png
-    - images/203.png
-    - images/204.png
-    - images/205.png
-    - images/206.png
-    - images/207.png
-    - images/208.png
-    - images/209.png
-    - images/210.png
-    - images/211.png
-    - images/212.png
-    - images/213.png
-    - images/300.png
+    - images/0.png
+    - images/0_night.png
+    - images/1.png
+    - images/1_night.png
+    - images/2.png
+    - images/3.png
+    - images/4.png
+    - images/5.png
+    - images/6.png
+    - images/7.png
+    - images/8.png
+    - images/9.png
+    - images/10.png
+    - images/11.png
+    - images/12.png
+    - images/13.png
+    - images/14.png
+    - images/15.png
+    - images/16.png
+    - images/17.png
+    - images/18.png
+    - images/19.png
+    - images/20.png
+    - images/21.png
+    - images/22.png
+    - images/23.png
+    - images/24.png
+    - images/25.png
+    - images/26.png
+    - images/27.png
+    - images/28.png
+    - images/29.png
+    - images/30.png
+    - images/53.png
+    - images/54.png
+    - images/55.png
+    - images/56.png
     - images/301.png
-    - images/302.png
-    - images/303.png
-    - images/304.png
-    - images/305.png
-    - images/306.png
-    - images/307.png
-    - images/308.png
-    - images/309.png
-    - images/310.png
-    - images/311.png
-    - images/312.png
-    - images/313.png
-    - images/314.png
-    - images/315.png
-    - images/316.png
-    - images/317.png
-    - images/318.png
-    - images/399.png
-    - images/400.png
-    - images/401.png
-    - images/402.png
-    - images/403.png
-    - images/404.png
-    - images/405.png
-    - images/406.png
-    - images/407.png
-    - images/408.png
-    - images/409.png
-    - images/410.png
-    - images/499.png
-    - images/500.png
-    - images/501.png
-    - images/502.png
-    - images/503.png
-    - images/504.png
-    - images/507.png
-    - images/508.png
-    - images/509.png
-    - images/510.png
-    - images/511.png
-    - images/512.png
-    - images/513.png
-    - images/514.png
-    - images/515.png
-    - images/900.png
-    - images/901.png
     - images/999.png
     - images/splash.png
     - images/air_soft_1.png
@@ -119,6 +94,7 @@ flutter:
     - images/air_soft_7.png
     - images/air_soft_8.png
     - images/drawer_bg.png
+    - images/duck_bg.png
     - images/ic_boat_day.png
     - images/ic_boat_night.png
     - images/ic_cloud.png
@@ -128,10 +104,15 @@ flutter:
     - images/ic_rain_ground.png
     - images/ic_sanstorm_ground.png
     - images/ic_snow_ground.png
-    - images/nothing_here.gif
     - images/hammer_share1.jpg
     - images/hammer_share2.jpg
     - images/hammer_share3.jpg
 
     # assets
     - assets/china-city-list.csv
+    - assets/jlqjjt.ttf
+
+  fonts:
+    - family: JLQJJT
+      fonts:
+        - asset: assets/jlqjjt.ttf

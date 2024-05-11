@@ -1,70 +1,95 @@
+import 'package:flutter_weather/common/weather_codes.dart';
+import 'package:intl/intl.dart';
+
 class WeatherData {
-  List<Weather> weathers;
+  List<Weather>? weathers;
 
   WeatherData({this.weathers});
 
   WeatherData.fromJson(Map<String, dynamic> json) {
-    if (json == null) return;
-
-    if (json['HeWeather6'] != null) {
-      weathers = List<Weather>();
-      json['HeWeather6'].forEach((v) {
-        weathers.add(Weather.fromJson(v));
-      });
-    }
+    // if (json['HeWeather6'] != null) {
+    //   weathers = <Weather>[];
+    //   json['HeWeather6'].forEach((v) {
+    //     weathers!.add(Weather.fromJson(v));
+    //   });
+    // }
+    // if (json['casts'] != null) {
+    //   weathers = <Weather>[];
+    //   json['casts'].forEach((v) {
+    //     weathers!.add(Weather.fromJson(v));
+    //   });
+    // }
+    weathers = <Weather>[];
+    weathers?.add(Weather.fromJson(json));
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
     if (this.weathers != null) {
-      data['HeWeather6'] = this.weathers.map((v) => v?.toJson()).toList();
+      data['HeWeather6'] = this.weathers!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class Weather {
-  WeatherBasic basic;
-  WeatherUpdate update;
-  String status;
-  WeatherNow now;
-  List<WeatherDailyForecast> dailyForecast;
-  List<WeatherHourly> hourly;
-  List<WeatherLifestyle> lifestyle;
+  WeatherBasic? basic;
+  WeatherUpdate? update;
+  String? status;
+  WeatherNow? now;
+  List<WeatherDailyForecast> dailyForecast = [];
+  List<WeatherHourly>? hourly;
+  List<WeatherLifestyle>? lifestyle;
 
   Weather(
       {this.basic,
       this.update,
       this.status,
       this.now,
-      this.dailyForecast,
+      required this.dailyForecast,
       this.hourly,
       this.lifestyle});
 
   Weather.fromJson(Map<String, dynamic> json) {
-    if (json == null) return;
-
-    basic = json['basic'] != null ? WeatherBasic.fromJson(json['basic']) : null;
-    update =
-        json['update'] != null ? WeatherUpdate.fromJson(json['update']) : null;
-    status = json['status'];
-    now = json['now'] != null ? WeatherNow.fromJson(json['now']) : null;
-    if (json['daily_forecast'] != null) {
-      dailyForecast = List<WeatherDailyForecast>();
-      json['daily_forecast'].forEach((v) {
-        dailyForecast.add(WeatherDailyForecast.fromJson(v));
+    // basic = json['basic'] != null ? WeatherBasic.fromJson(json['basic']) : null;
+    // update =
+    //     json['update'] != null ? WeatherUpdate.fromJson(json['update']) : null;
+    // status = json['status'];
+    // if (json['lifestyle'] != null) {
+    //   lifestyle = <WeatherLifestyle>[];
+    //   json['lifestyle'].forEach((v) {
+    //     lifestyle!.add(WeatherLifestyle.fromJson(v));
+    //   });
+    // }
+    if (json['forecastDaily'] != null) {
+      dailyForecast = <WeatherDailyForecast>[];
+      json['forecastDaily']['sunRiseSet']['value'].asMap().forEach((k, v) {
+        dailyForecast!.add(WeatherDailyForecast.fromJson({
+          'aqi': json['forecastDaily']['aqi']['value'][k],
+          'precipitationProbability': json['forecastDaily']['precipitationProbability']['value'][k],
+          'temperature': json['forecastDaily']['temperature']['value'][k],
+          'weather': json['forecastDaily']['weather']['value'][k],
+          'wind': json['forecastDaily']['wind']['speed']['value'][k],
+          'sunRiseSet': v
+        }));
       });
     }
-    if (json['hourly'] != null) {
-      hourly = List<WeatherHourly>();
-      json['hourly'].forEach((v) {
-        hourly.add(WeatherHourly.fromJson(v));
+    if (json['forecastHourly'] != null) {
+      hourly = <WeatherHourly>[];
+      json['forecastHourly']['aqi']['value'].asMap().forEach((k, v) {
+        hourly!.add(WeatherHourly.fromJson({
+          'aqi': v,
+          'temperature': json['forecastHourly']['temperature']['value'][k],
+          'weather': json['forecastHourly']['weather']['value'][k],
+          'wind': json['forecastHourly']['wind']['value'][k],
+        }));
       });
     }
-    if (json['lifestyle'] != null) {
-      lifestyle = List<WeatherLifestyle>();
-      json['lifestyle'].forEach((v) {
-        lifestyle.add(WeatherLifestyle.fromJson(v));
+    now = json['current'] != null ? WeatherNow.fromJson(json['current']) : null;
+    if (json['forecasts'] != null) {
+      dailyForecast = <WeatherDailyForecast>[];
+      json['forecasts'][0]['casts'].forEach((v) {
+        dailyForecast?.add(WeatherDailyForecast.fromJson(v));
       });
     }
   }
@@ -72,38 +97,38 @@ class Weather {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
     if (this.basic != null) {
-      data['basic'] = this.basic.toJson();
+      data['basic'] = this.basic!.toJson();
     }
     if (this.update != null) {
-      data['update'] = this.update.toJson();
+      data['update'] = this.update!.toJson();
     }
     data['status'] = this.status;
     if (this.now != null) {
-      data['now'] = this.now.toJson();
+      data['now'] = this.now!.toJson();
     }
     if (this.dailyForecast != null) {
       data['daily_forecast'] =
-          this.dailyForecast.map((v) => v?.toJson()).toList();
+          this.dailyForecast!.map((v) => v.toJson()).toList();
     }
     if (this.hourly != null) {
-      data['hourly'] = this.hourly.map((v) => v?.toJson()).toList();
+      data['hourly'] = this.hourly!.map((v) => v.toJson()).toList();
     }
     if (this.lifestyle != null) {
-      data['lifestyle'] = this.lifestyle.map((v) => v?.toJson()).toList();
+      data['lifestyle'] = this.lifestyle!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class WeatherBasic {
-  String cid;
-  String location;
-  String parentCity;
-  String adminArea;
-  String cnty;
-  String lat;
-  String lon;
-  String tz;
+  String? cid;
+  String? location;
+  String? parentCity;
+  String? adminArea;
+  String? cnty;
+  String? lat;
+  String? lon;
+  String? tz;
 
   WeatherBasic(
       {this.cid,
@@ -116,8 +141,6 @@ class WeatherBasic {
       this.tz});
 
   WeatherBasic.fromJson(Map<String, dynamic> json) {
-    if (json == null) return;
-
     cid = json['cid'];
     location = json['location'];
     parentCity = json['parent_city'];
@@ -143,14 +166,12 @@ class WeatherBasic {
 }
 
 class WeatherUpdate {
-  String loc;
-  String utc;
+  String? loc;
+  String? utc;
 
   WeatherUpdate({this.loc, this.utc});
 
   WeatherUpdate.fromJson(Map<String, dynamic> json) {
-    if (json == null) return;
-
     loc = json['loc'];
     utc = json['utc'];
   }
@@ -164,19 +185,19 @@ class WeatherUpdate {
 }
 
 class WeatherNow {
-  String cloud;
-  String condCode;
-  String condTxt;
-  String fl;
-  String hum;
-  String pcpn;
-  String pres;
-  String tmp;
-  String vis;
-  String windDeg;
-  String windDir;
-  String windSc;
-  String windSpd;
+  String? cloud;
+  String? condCode;
+  String? condTxt;
+  String? fl;
+  String? hum;
+  String? pcpn;
+  String? pres;
+  String? tmp;
+  String? vis;
+  String? windDeg;
+  String? windDir;
+  String? windSc;
+  String? windSpd;
 
   WeatherNow(
       {this.cloud,
@@ -194,21 +215,26 @@ class WeatherNow {
       this.windSpd});
 
   WeatherNow.fromJson(Map<String, dynamic> json) {
-    if (json == null) return;
-
-    cloud = json['cloud'];
-    condCode = json['cond_code'];
-    condTxt = json['cond_txt'];
-    fl = json['fl'];
-    hum = json['hum'];
-    pcpn = json['pcpn'];
-    pres = json['pres'];
-    tmp = json['tmp'];
-    vis = json['vis'];
-    windDeg = json['wind_deg'];
-    windDir = json['wind_dir'];
-    windSc = json['wind_sc'];
-    windSpd = json['wind_spd'];
+    // cloud = json['cloud'];
+    // condCode = json['cond_code'];
+    // condTxt = json['cond_txt'];
+    // fl = json['fl'];
+    // hum = json['hum'];
+    // pcpn = json['pcpn'];
+    // pres = json['pres'];
+    // tmp = json['tmp'];
+    // vis = json['vis'];
+    // windDeg = json['wind_deg'];
+    // windDir = json['wind_dir'];
+    // windSc = json['wind_sc'];
+    // windSpd = json['wind_spd'];
+    
+    condCode = json['weather'] != null ? json['weather'].toString() : null;
+    condTxt = json['weather'] != null ? weatherCodes[json['weather']].toString() : null;
+    tmp = json['temperature'] != null ? json['temperature']['value'].toString() : null;
+    hum = json['humidity'] != null ? json['humidity']['value'].toString() : null;
+    pres = json['pressure'] != null ? json['pressure']['value'].toString() : null;
+    windSc = json['wind'] != null ? json['wind']['speed']['value'].toString() : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -231,27 +257,27 @@ class WeatherNow {
 }
 
 class WeatherDailyForecast {
-  String condCodeD;
-  String condCodeN;
-  String condTxtD;
-  String condTxtN;
-  String date;
-  String hum;
-  String mr;
-  String ms;
-  String pcpn;
-  String pop;
-  String pres;
-  String sr;
-  String ss;
-  String tmpMax;
-  String tmpMin;
-  String uvIndex;
-  String vis;
-  String windDeg;
-  String windDir;
-  String windSc;
-  String windSpd;
+  String? condCodeD;
+  String? condCodeN;
+  String? condTxtD;
+  String? condTxtN;
+  String? date;
+  String? hum;
+  String? mr;
+  String? ms;
+  String? pcpn;
+  String? pop;
+  String? pres;
+  String? sr;
+  String? ss;
+  String? tmpMax;
+  String? tmpMin;
+  String? uvIndex;
+  String? vis;
+  String? windDeg;
+  String? windDir;
+  String? windSc;
+  String? windSpd;
 
   WeatherDailyForecast(
       {this.condCodeD,
@@ -277,29 +303,28 @@ class WeatherDailyForecast {
       this.windSpd});
 
   WeatherDailyForecast.fromJson(Map<String, dynamic> json) {
-    if (json == null) return;
-
-    condCodeD = json['cond_code_d'];
-    condCodeN = json['cond_code_n'];
-    condTxtD = json['cond_txt_d'];
-    condTxtN = json['cond_txt_n'];
-    date = json['date'];
-    hum = json['hum'];
-    mr = json['mr'];
-    ms = json['ms'];
-    pcpn = json['pcpn'];
-    pop = json['pop'];
-    pres = json['pres'];
-    sr = json['sr'];
-    ss = json['ss'];
-    tmpMax = json['tmp_max'];
-    tmpMin = json['tmp_min'];
-    uvIndex = json['uv_index'];
-    vis = json['vis'];
-    windDeg = json['wind_deg'];
-    windDir = json['wind_dir'];
-    windSc = json['wind_sc'];
-    windSpd = json['wind_spd'];
+    condCodeD = json['weather'] != null ? json['weather']['from'].toString() : null;
+    condCodeN = json['weather'] != null ? json['weather']['from'].toString() : null;
+    condTxtD = json['weather'] != null ? weatherCodes[json['weather']['from']].toString() : null;
+    condTxtN = json['weather'] != null ? weatherCodes[json['weather']['to']].toString() : null;
+    date = DateFormat('yyyy-MM-dd').format(DateTime.parse(json['sunRiseSet']['from']));
+    tmpMax = json['temperature'] != null ? json['temperature']['from'].toString() : null;
+    tmpMin = json['temperature'] != null ? json['temperature']['to'].toString() : null;
+    // hum = json['hum'];
+    // mr = json['mr'];
+    // ms = json['ms'];
+    // pcpn = json['pcpn'];
+    // pop = json['pop'];
+    // pres = json['pres'];
+    // sr = json['sr'];
+    // ss = json['ss'];
+    // uvIndex = json['uv_index'];
+    // vis = json['vis'];
+    // windDeg = json['wind_deg'];
+    // windDir = json['wind_dir'];
+    // windSc = json['wind_sc'];
+    // windSpd = json['wind_spd'];
+    // condCodeD = json['dayweather'];
   }
 
   Map<String, dynamic> toJson() {
@@ -330,19 +355,19 @@ class WeatherDailyForecast {
 }
 
 class WeatherHourly {
-  String cloud;
-  String condCode;
-  String condTxt;
-  String dew;
-  String hum;
-  String pop;
-  String pres;
-  String time;
-  String tmp;
-  String windDeg;
-  String windDir;
-  String windSc;
-  String windSpd;
+  String? cloud;
+  String? condCode;
+  String? condTxt;
+  String? dew;
+  String? hum;
+  String? pop;
+  String? pres;
+  String? time;
+  String? tmp;
+  String? windDeg;
+  String? windDir;
+  String? windSc;
+  String? windSpd;
 
   WeatherHourly(
       {this.cloud,
@@ -360,52 +385,49 @@ class WeatherHourly {
       this.windSpd});
 
   WeatherHourly.fromJson(Map<String, dynamic> json) {
-    if (json == null) return;
-
-    cloud = json['cloud'];
-    condCode = json['cond_code'];
-    condTxt = json['cond_txt'];
-    dew = json['dew'];
-    hum = json['hum'];
-    pop = json['pop'];
-    pres = json['pres'];
-    time = json['time'];
-    tmp = json['tmp'];
-    windDeg = json['wind_deg'];
-    windDir = json['wind_dir'];
-    windSc = json['wind_sc'];
-    windSpd = json['wind_spd'];
+    // cloud = json['cloud'];
+    condCode = json['weather'].toString();
+    condTxt = weatherCodes[json['weather']] ?? '';
+    // dew = json['dew'];
+    // hum = json['hum'];
+    // pop = json['pop'];
+    // pres = json['pres'];
+    // TODO: 处理时区
+    time = DateFormat('HH').format(DateTime.parse(json['wind']['datetime']).add(new Duration(hours: 8)));
+    tmp = json['temperature'].toString();
+    // windDeg = json['wind_deg'];
+    // windDir = json['wind_dir'];
+    // windSc = json['wind_sc'];
+    windSpd = json['wind']['speed'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
-    data['cloud'] = this.cloud;
-    data['cond_code'] = this.condCode;
+    // data['cloud'] = this.cloud;
+    // data['cond_code'] = this.condCode;
     data['cond_txt'] = this.condTxt;
-    data['dew'] = this.dew;
-    data['hum'] = this.hum;
-    data['pop'] = this.pop;
-    data['pres'] = this.pres;
-    data['time'] = this.time;
-    data['tmp'] = this.tmp;
-    data['wind_deg'] = this.windDeg;
-    data['wind_dir'] = this.windDir;
-    data['wind_sc'] = this.windSc;
-    data['wind_spd'] = this.windSpd;
+    // data['dew'] = this.dew;
+    // data['hum'] = this.hum;
+    // data['pop'] = this.pop;
+    // data['pres'] = this.pres;
+    // data['time'] = this.time;
+    // data['tmp'] = this.tmp;
+    // data['wind_deg'] = this.windDeg;
+    // data['wind_dir'] = this.windDir;
+    // data['wind_sc'] = this.windSc;
+    // data['wind_spd'] = this.windSpd;
     return data;
   }
 }
 
 class WeatherLifestyle {
-  String type;
-  String brf;
-  String txt;
+  String? type;
+  String? brf;
+  String? txt;
 
   WeatherLifestyle({this.type, this.brf, this.txt});
 
   WeatherLifestyle.fromJson(Map<String, dynamic> json) {
-    if (json == null) return;
-
     type = json['type'];
     brf = json['brf'];
     txt = json['txt'];

@@ -1,12 +1,18 @@
-class PageModule {
-  PageType page;
-  bool open;
+enum PageType {
+  WEATHER, // 天气页面
+  GIFT, // 福利页面
+  READ, // 闲读页面
+  GANHUO, // 干货页面
+  COLLECT, // 收藏页面
+}
 
-  PageModule({this.page, this.open});
+class PageModule {
+  PageType page = PageType.WEATHER;
+  bool open = true;
+
+  PageModule({required this.page, required this.open});
 
   PageModule.fromJson(Map<String, dynamic> json) {
-    if (json == null) return;
-
     switch (json["page"]) {
       case "weather":
         page = PageType.WEATHER;
@@ -24,12 +30,11 @@ class PageModule {
         page = PageType.COLLECT;
         break;
     }
-    open = json["open"];
+    open = json["open"] ?? true;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
-
     switch (page) {
       case PageType.WEATHER:
         data["page"] = "weather";
@@ -48,24 +53,11 @@ class PageModule {
         break;
     }
     data["open"] = this.open;
-
     return data;
   }
-}
 
-enum PageType {
-  /// 天气页面
-  WEATHER,
-
-  /// 福利页面
-  GIFT,
-
-  /// 闲读页面
-  READ,
-
-  /// 干货页面
-  GANHUO,
-
-  /// 收藏页面
-  COLLECT,
+  @override
+  String toString() {
+    return "PageModule {page: $page, open: $open}";
+  }
 }

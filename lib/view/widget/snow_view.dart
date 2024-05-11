@@ -5,7 +5,7 @@ import 'package:flutter_weather/utils/system_util.dart';
 
 /// 雪花
 class SnowView extends StatefulWidget {
-  /// 是否为全屏下雪
+  // 是否为全屏下雪
   final bool fullScreen;
 
   SnowView({this.fullScreen = false});
@@ -15,21 +15,21 @@ class SnowView extends StatefulWidget {
 }
 
 class _SnowState extends State<SnowView> with TickerProviderStateMixin {
-  /// 雪花透明度
-  int _alpha;
+  // 雪花透明度
+  int? _alpha;
 
-  /// 初始距离左侧边距
-  double _left;
+  // 初始距离左侧边距
+  double? _left;
 
-  /// 初始距离底部位置
-  double _bottomBegin;
+  // 初始距离底部位置
+  double? _bottomBegin;
 
-  /// 雪花大小
-  double _size;
+  // 雪花大小
+  double? _size;
 
-  /// 运动动画
-  AnimationController _controller;
-  Animation<double> _anim;
+  // 运动动画
+  AnimationController? _controller;
+  Animation<double>? _anim;
 
   @override
   void initState() {
@@ -41,9 +41,9 @@ class _SnowState extends State<SnowView> with TickerProviderStateMixin {
             milliseconds: (Random().nextDouble() * 8000 + 4000).toInt()))
       ..forward()
       ..addListener(() {
-        if (_anim.value <= -20) {
+        if (_anim!.value <= -20) {
           _initStartData();
-          _controller
+          _controller!
             ..reset()
             ..forward();
         }
@@ -55,8 +55,8 @@ class _SnowState extends State<SnowView> with TickerProviderStateMixin {
     super.didChangeDependencies();
 
     _initStartData();
-    _anim = Tween(begin: _bottomBegin, end: _bottomBegin - _fullHeight - 20)
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
+    _anim = Tween(begin: _bottomBegin, end: _bottomBegin! - _fullHeight - 20)
+        .animate(CurvedAnimation(parent: _controller!, curve: Curves.linear));
   }
 
   @override
@@ -69,25 +69,25 @@ class _SnowState extends State<SnowView> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _anim,
+      animation: _anim!,
       builder: (context, child) {
         return Positioned(
           child: Container(
             height: _size,
             width: _size,
             decoration: BoxDecoration(
-              color: Colors.white.withAlpha(_alpha),
+              color: Colors.white.withAlpha(_alpha!),
               shape: BoxShape.circle,
             ),
           ),
-          left: _left + (widget.fullScreen ? 0 : (260 - _anim.value) / 3),
-          bottom: _anim.value,
+          left: _left! + (widget.fullScreen ? 0 : (260 - _anim!.value) / 3),
+          bottom: _anim!.value,
         );
       },
     );
   }
 
-  /// 初始化雪花开始的数据
+  // 初始化雪花开始的数据
   void _initStartData() {
     _alpha = Random().nextInt(140) + 60;
     _size = Random().nextDouble() * 12;

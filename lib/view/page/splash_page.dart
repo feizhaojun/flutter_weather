@@ -16,6 +16,7 @@ class SplashState extends PageState<SplashPage> {
   void initState() {
     super.initState();
 
+    // TODO:
     Rx.timer(Null, const Duration(milliseconds: 500))
         .map((_) => SharedDepository().themeColor)
         .map((color) =>
@@ -26,16 +27,13 @@ class SplashState extends PageState<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      child: Scaffold(
-        body: Image.asset(
-          "images/splash.png",
-          fit: isAndroid ? BoxFit.fill : BoxFit.fitHeight,
-          width: double.infinity,
-          height: double.infinity,
-        ),
+    return Scaffold(
+      body: Image.asset(
+        "images/splash.png",
+        fit: isAndroid ? BoxFit.fill : BoxFit.fitHeight,
+        width: double.infinity,
+        height: double.infinity,
       ),
-      onWillPop: () async => false,
     );
   }
 }

@@ -7,7 +7,7 @@ import 'package:flutter_weather/view/page/page_state.dart';
 import 'package:flutter_weather/view/page/read_content_page.dart';
 import 'package:flutter_weather/view/widget/custom_app_bar.dart';
 import 'package:flutter_weather/view/widget/loading_view.dart';
-import 'package:flutter_weather/viewmodel/ganhuo_viewmodel.dart';
+import 'package:flutter_weather/viewmodel/ganhuo_viewModel.dart';
 
 class GanHuoPage extends StatefulWidget {
   @override
@@ -22,13 +22,14 @@ class GanHuoState extends PageState<GanHuoPage> {
     super.initState();
 
     _viewModel
-      ..loadTitle()
-      ..error
-          .stream
-          .where((b) => b)
-          .listen((_) => networkError(
-              errorText: S.of(context).readTitleFail, retry: _viewModel.reload))
-          .bindLife(this);
+      ..loadTitle();
+            // TODO:
+      // ..error
+      //     .stream
+      //     .where((b) => b)
+      //     .listen((_) => networkError(
+      //         errorText: S.of(context)?.readTitleFail, retry: _viewModel.reload))
+      //     .bindLife(this);
   }
 
   @override
@@ -55,13 +56,13 @@ class GanHuoState extends PageState<GanHuoPage> {
                 children: <Widget>[
                   CustomAppBar(
                     title: Text(
-                      S.of(context).ganHuo,
+                      S.of(context)?.ganHuo ?? '',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
                       ),
                     ),
-                    color: Theme.of(context).accentColor,
+                    color: Theme.of(context).primaryColor,
                     leftBtn: IconButton(
                       icon: Icon(
                         Icons.menu,

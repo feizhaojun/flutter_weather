@@ -1,11 +1,11 @@
 /// 煎蛋图片数据
 class EggData {
-  String status;
-  int currentPage;
-  int totalComments;
-  int pageCount;
-  int count;
-  List<EggComments> comments;
+  String? status;
+  int? currentPage;
+  int? totalComments;
+  int? pageCount;
+  int? count;
+  List<EggComments>? comments;
 
   EggData(
       {this.status,
@@ -16,17 +16,15 @@ class EggData {
       this.comments});
 
   EggData.fromJson(Map<String, dynamic> json) {
-    if (json == null) return;
-
     status = json['status'];
     currentPage = json['current_page'];
     totalComments = json['total_comments'];
     pageCount = json['page_count'];
     count = json['count'];
     if (json['comments'] != null) {
-      comments = List<EggComments>();
+      comments = <EggComments>[];
       json['comments'].forEach((v) {
-        comments.add(EggComments.fromJson(v));
+        comments!.add(EggComments.fromJson(v));
       });
     }
   }
@@ -39,25 +37,25 @@ class EggData {
     data['page_count'] = this.pageCount;
     data['count'] = this.count;
     if (this.comments != null) {
-      data['comments'] = this.comments.map((v) => v?.toJson()).toList();
+      data['comments'] = this.comments!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class EggComments {
-  String commentID;
-  String commentPostID;
-  String commentAuthor;
-  String commentDate;
-  String commentDateGmt;
-  String commentContent;
-  String userId;
-  String votePositive;
-  String voteNegative;
-  String subCommentCount;
-  String textContent;
-  List<String> pics;
+  String? commentID;
+  String? commentPostID;
+  String? commentAuthor;
+  String? commentDate;
+  String? commentDateGmt;
+  String? commentContent;
+  String? userId;
+  String? votePositive;
+  String? voteNegative;
+  String? subCommentCount;
+  String? textContent;
+  List<String>? pics;
 
   EggComments(
       {this.commentID,
@@ -74,8 +72,6 @@ class EggComments {
       this.pics});
 
   EggComments.fromJson(Map<String, dynamic> json) {
-    if (json == null) return;
-
     commentID = json['comment_ID'];
     commentPostID = json['comment_post_ID'];
     commentAuthor = json['comment_author'];

@@ -16,13 +16,13 @@ class GiftPage extends StatelessWidget {
         children: <Widget>[
           CustomAppBar(
             title: Text(
-              S.of(context).gift,
+              S.of(context)?.gift ?? '',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,
               ),
             ),
-            color: Theme.of(context).accentColor,
+            color: Theme.of(context).primaryColor,
             leftBtn: IconButton(
               icon: Icon(
                 Icons.menu,
@@ -36,13 +36,13 @@ class GiftPage extends StatelessWidget {
               indicatorColor: Colors.white,
               isScrollable: true,
               tabs: [
-                Tab(text: S.of(context).egg),
-                Tab(text: S.of(context).gank),
-                Tab(text: S.of(context).beachGirl),
-                Tab(text: S.of(context).mostHot),
-                Tab(text: S.of(context).taiwanGirl),
-                Tab(text: S.of(context).sexGirl),
-                Tab(text: S.of(context).japanGirl),
+                Tab(text: S.of(context)?.egg),
+                Tab(text: S.of(context)?.gank),
+                Tab(text: S.of(context)?.beachGirl),
+                Tab(text: S.of(context)?.mostHot),
+                Tab(text: S.of(context)?.taiwanGirl),
+                Tab(text: S.of(context)?.sexGirl),
+                Tab(text: S.of(context)?.japanGirl),
               ],
             ),
           ),

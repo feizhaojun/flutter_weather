@@ -20,8 +20,8 @@ class AboutViewModel extends ViewModel {
     isLoading.safeAdd(true);
 
     try {
-      final data = await _service.getVersion();
-      version.safeAdd(data);
+      // final data = await _service.getVersion();
+      // version.safeAdd(data);
     } on DioError catch (e) {
       doError(e);
     } finally {
@@ -30,7 +30,7 @@ class AboutViewModel extends ViewModel {
     }
   }
 
-  /// Android专用
+  // Android专用
   Future<void> updateApp(String url, int code)  async {
     if (isIOS) return;
 

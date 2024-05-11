@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_weather/model/data/mixing.dart';
 import 'package:flutter_weather/common/streams.dart';
 
@@ -12,7 +11,7 @@ class EventSendHolder {
 
   final _eventBroadcast = StreamController<Pair<String, dynamic>>();
 
-  Stream<Pair<String, dynamic>> event;
+  Stream<Pair<String, dynamic>>? event;
 
   EventSendHolder._internal() {
     event = _eventBroadcast.stream.asBroadcastStream();
@@ -20,7 +19,7 @@ class EventSendHolder {
 
   /// [tag]表示标识符
   /// [event]表示要发送的事件
-  void sendEvent({@required String tag, @required dynamic event}) =>
+  void sendEvent({required String tag, required dynamic event}) =>
       _eventBroadcast.safeAdd(Pair(tag, event));
 
   void dispose() {

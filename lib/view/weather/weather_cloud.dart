@@ -7,7 +7,7 @@ import 'weather_sunny.dart';
 class WeatherCloud extends StatefulWidget {
   final Color color;
 
-  WeatherCloud({Key key, @required this.color}) : super(key: key);
+  WeatherCloud({Key? key, required this.color}) : super(key: key);
 
   @override
   State createState() => WeatherCloudState();
@@ -15,13 +15,13 @@ class WeatherCloud extends StatefulWidget {
 
 class WeatherCloudState extends State<WeatherCloud>
     with TickerProviderStateMixin {
-  /// 白云移动动画
-  AnimationController _cloudController;
-  Animation<double> _cloudAnim;
+  // 白云移动动画
+  AnimationController? _cloudController;
+  Animation<double>? _cloudAnim;
 
-  /// 白云上下动画
-  AnimationController _cloudTopController;
-  Animation<double> _cloudTopAnim;
+  // 白云上下动画
+  AnimationController? _cloudTopController;
+  Animation<double>? _cloudTopAnim;
 
   @override
   void initState() {
@@ -42,9 +42,9 @@ class WeatherCloudState extends State<WeatherCloud>
 
     if (_cloudAnim == null || _cloudTopAnim == null) {
       _cloudAnim = Tween(begin: 0.0, end: getScreenWidth(context) / 2).animate(
-          CurvedAnimation(parent: _cloudController, curve: Curves.ease));
+          CurvedAnimation(parent: _cloudController!, curve: Curves.ease));
       _cloudTopAnim = Tween(begin: 245.0, end: 235.0).animate(
-          CurvedAnimation(parent: _cloudTopController, curve: Curves.easeOut));
+          CurvedAnimation(parent: _cloudTopController!, curve: Curves.easeOut));
     }
   }
 
@@ -67,10 +67,10 @@ class WeatherCloudState extends State<WeatherCloud>
 
         // 白云
         AnimatedBuilder(
-          animation: _cloudAnim,
+          animation: _cloudAnim!,
           builder: (context, child) {
             return AnimatedBuilder(
-              animation: _cloudTopAnim,
+              animation: _cloudTopAnim!,
               builder: (context, child) {
                 return Positioned(
                   child: RepaintBoundary(
@@ -83,8 +83,8 @@ class WeatherCloudState extends State<WeatherCloud>
                       ),
                     ),
                   ),
-                  bottom: _cloudTopAnim.value,
-                  left: _cloudAnim.value,
+                  bottom: _cloudTopAnim!.value,
+                  left: _cloudAnim!.value,
                 );
               },
             );

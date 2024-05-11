@@ -1,9 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 
-abstract class StreamSubController {
-  final _subList = List<StreamSubscription>();
+// abstract class TODO:
+mixin StreamSubController {
+  final _subList = <StreamSubscription>[];
 
   void _bindSub(StreamSubscription sub) {
     _subList.add(sub);
@@ -24,6 +24,7 @@ extension SubscriptionExt on StreamSubscription {
 
 extension ControllerExt<T> on StreamController<T> {
   void safeAdd(T data) {
+    debugPrint("safeAdd: ${data} ${DateTime.now()}");
     if (this.isClosed) return;
 
     this.add(data);

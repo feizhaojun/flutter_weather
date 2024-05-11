@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_weather/model/data/mixing.dart';
 import 'package:flutter_weather/model/data/mzi_data.dart';
 import 'package:flutter_weather/model/service/service.dart';
@@ -10,9 +9,9 @@ class GiftMziService extends Service {
     dio.options.baseUrl = "https://www.mzitu.com";
   }
 
-  /// 获取列表数据
+  // 获取列表数据
   Future<MziData> getImageList(
-      {@required String url, @required int page}) async {
+      {required String url, required int page}) async {
     final response = await get("/$url/page/$page", cancelToken: cancelToken);
 
     return await compute(
@@ -37,7 +36,7 @@ class GiftMziService extends Service {
     final total = document.getElementsByClassName("postlist").first;
     final items = total.querySelectorAll("li");
 
-    final list = List<MziItem>();
+    final list = <MziItem>[];
     items.forEach((item) {
       final img = item.querySelector("img");
       if (img == null) return;
@@ -45,13 +44,13 @@ class GiftMziService extends Service {
       final imgUrl = img.attributes["data-original"];
       final imgHeight = img.attributes["height"] != "auto" &&
               img.attributes["width"] != "auto"
-          ? int.parse(img.attributes["height"])
+          ? int.parse(img.attributes["height"]!)
           : 354;
       final imgWidth = img.attributes["width"] != "auto" &&
               img.attributes["height"] != "auto"
-          ? int.parse(img.attributes["width"])
+          ? int.parse(img.attributes["width"]!)
           : 236;
-      final link = item.querySelector("a[href]").attributes["href"];
+      final link = item.querySelector("a[href]")?.attributes["href"];
 
       list.add(MziItem(
           url: imgUrl,
@@ -65,8 +64,8 @@ class GiftMziService extends Service {
     return MziData(three.b, maxPage, list);
   }
 
-  /// 获取每个妹子图集的最大数量
-  Future<int> getLength({@required String link}) async {
+  // 获取每个妹子图集的最大数量
+  Future<int> getLength({required String link}) async {
     final response = await get(link, cancelToken: cancelToken);
 
     return await compute(_formatLen, response.data);
@@ -92,9 +91,9 @@ class GiftMziService extends Service {
     return maxLength;
   }
 
-  /// 获取图集下的每一张图片
+  // 获取图集下的每一张图片
   Future<MziItem> getEachData(
-      {@required String link, @required int index}) async {
+      {required String link, required int index}) async {
     final response = await get("$link/$index", cancelToken: cancelToken);
 
     return await compute(_formatItem, Three(link, index, response.data));
@@ -106,9 +105,9 @@ class GiftMziService extends Service {
     final document = parse(three.c);
     final total = document.getElementsByClassName("main-image").first;
     final img = total.querySelector("img");
-    final url = img.attributes["src"];
-    final width = double.parse(img.attributes["width"]).toInt();
-    final height = double.parse(img.attributes["height"]).toInt();
+    final url = img?.attributes["src"];
+    final width = double.parse(img!.attributes["width"]!).toInt();
+    final height = double.parse(img.attributes["height"]!).toInt();
     final refer = "${three.a}/";
 
     return MziItem(

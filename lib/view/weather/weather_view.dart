@@ -14,9 +14,9 @@ class WeatherView extends StatefulWidget {
   final bool hide;
 
   WeatherView(
-      {@required this.type,
-      @required this.child,
-      @required this.color,
+      {required this.type,
+      required this.child,
+      required this.color,
       this.hide = false});
 
   @override
@@ -25,8 +25,8 @@ class WeatherView extends StatefulWidget {
 
 class WeatherViewState extends State<WeatherView>
     with TickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<Color> _anim;
+  AnimationController? _controller;
+  Animation<Color?>? _anim;
 
   @override
   void initState() {
@@ -35,17 +35,17 @@ class WeatherViewState extends State<WeatherView>
     _controller =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
     _anim = ColorTween(begin: widget.color, end: widget.color)
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
+        .animate(CurvedAnimation(parent: _controller!, curve: Curves.linear));
   }
 
   @override
   void didUpdateWidget(WeatherView oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.color != null && oldWidget.color != widget.color) {
+    if (oldWidget.color != widget.color) {
       _anim = ColorTween(begin: oldWidget.color, end: widget.color)
-          .animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
-      _controller
+          .animate(CurvedAnimation(parent: _controller!, curve: Curves.linear));
+      _controller!
         ..reset()
         ..forward();
     }
@@ -66,21 +66,21 @@ class WeatherViewState extends State<WeatherView>
       final type = widget.type;
       if (type.contains("晴")) {
         weather = AnimatedBuilder(
-          animation: _anim,
+          animation: _anim!,
           builder: (context, child) {
             return WeatherSunny(
               key: Key("晴"),
-              color: _anim.value,
+              color: _anim!.value!,
             );
           },
         );
       } else if (type.contains("多云")) {
         weather = AnimatedBuilder(
-          animation: _anim,
+          animation: _anim!,
           builder: (context, child) {
             return WeatherCloud(
               key: Key("多云"),
-              color: _anim.value,
+              color: _anim!.value!,
             );
           },
         );
@@ -102,18 +102,10 @@ class WeatherViewState extends State<WeatherView>
         weather = WeatherRain(key: Key("雾"), fog: true);
       } else if (type.contains("沙") || type.contains("尘")) {
         weather = WeatherSandstorm(key: Key("沙"), isSmog: false);
-      } else if (type.contains("阴")) {
-        weather = WeatherOvercast(key: Key("阴"));
+      } else if (type == '') {
+        weather = Container();
       } else {
-        weather = AnimatedBuilder(
-          animation: _anim,
-          builder: (context, child) {
-            return WeatherCloud(
-              key: Key("多云"),
-              color: _anim.value,
-            );
-          },
-        );
+        weather = WeatherOvercast(key: Key("阴"));
       }
     } else {
       weather = Container();
@@ -124,7 +116,8 @@ class WeatherViewState extends State<WeatherView>
         AnimatedContainer(
           duration: const Duration(seconds: 2),
           child: weather,
-          color: widget.color,
+          // color: widget.color,
+          color: Colors.transparent,
         ),
         widget.child,
       ],

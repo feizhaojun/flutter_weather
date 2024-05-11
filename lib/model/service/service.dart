@@ -9,16 +9,17 @@ abstract class Service {
   final cancelToken = CancelToken();
 
   Service() {
-    dio.options.connectTimeout = 8000;
-    dio.options.receiveTimeout = 8000;
+    dio.options.connectTimeout = Duration(seconds: 8000);
+    dio.options.receiveTimeout = Duration(seconds: 8000);
   }
 
   @protected
-  Future<Response<T>> get<T>(String path,
-      {Map<String, dynamic> queryParameters,
-      Options options,
-      CancelToken cancelToken,
-      ProgressCallback onReceiveProgress}) async {
+  // Future<Response<T>> get<T>(String path,
+  Future<Response> get<T>(String path,
+      {Map<String, dynamic>? queryParameters,
+      Options? options,
+      CancelToken? cancelToken,
+      ProgressCallback? onReceiveProgress}) async {
     final response = await retry(
         () => dio.get(path,
             queryParameters: queryParameters,
@@ -32,13 +33,13 @@ abstract class Service {
   }
 
   @protected
-  Future<Response<T>> post<T>(String path,
+  Future<Response> post<T>(String path,
       {data,
-      Map<String, dynamic> queryParameters,
-      Options options,
-      CancelToken cancelToken,
-      ProgressCallback onSendProgress,
-      ProgressCallback onReceiveProgress}) async {
+      Map<String, dynamic>? queryParameters,
+      Options? options,
+      CancelToken? cancelToken,
+      ProgressCallback? onSendProgress,
+      ProgressCallback? onReceiveProgress}) async {
     final response = await retry(
         () => dio.post(path,
             data: data,
@@ -54,11 +55,11 @@ abstract class Service {
   }
 
   @protected
-  Future<Response<T>> delete<T>(String path,
+  Future<Response> delete<T>(String path,
       {data,
-      Map<String, dynamic> queryParameters,
-      Options options,
-      CancelToken cancelToken}) async {
+      Map<String, dynamic>? queryParameters,
+      Options? options,
+      CancelToken? cancelToken}) async {
     final response = await retry(
         () => dio.delete(path,
             data: data,

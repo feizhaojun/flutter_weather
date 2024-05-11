@@ -12,11 +12,11 @@ class FavHolder {
 
   final _favReadBroadcast = StreamController<List<GankItem>>();
   final _favMziBroadcast = StreamController<List<MziItem>>();
-  final _cacheReads = List<GankItem>();
-  final _cacheMzis = List<MziItem>();
+  final _cacheReads = <GankItem>[];
+  final _cacheMzis = <MziItem>[];
 
-  Stream<List<GankItem>> favReadStream;
-  Stream<List<MziItem>> favMziStream;
+  Stream<List<GankItem>>? favReadStream;
+  Stream<List<MziItem>>? favMziStream;
 
   List<MziItem> get favMzis => _cacheMzis;
 
@@ -36,7 +36,7 @@ class FavHolder {
     _favMziBroadcast.safeAdd(_cacheMzis);
   }
 
-  /// 添加或取消收藏
+  // 添加或取消收藏
   Future<void> autoFav(dynamic data) async {
     if (data == null) return;
 
@@ -62,7 +62,7 @@ class FavHolder {
     }
   }
 
-  /// 判断[data]是否被收藏
+  // 判断[data]是否被收藏
   bool isFavorite(dynamic data) {
     if(data == null){
       return false;

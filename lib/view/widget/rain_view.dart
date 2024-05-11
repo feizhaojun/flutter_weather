@@ -5,7 +5,7 @@ import 'package:flutter_weather/utils/system_util.dart';
 
 /// 雨点
 class RainView extends StatefulWidget {
-  /// 是否为大风天
+  // 是否为大风天
   final bool bigWind;
 
   RainView({this.bigWind = true});
@@ -15,17 +15,17 @@ class RainView extends StatefulWidget {
 }
 
 class _RainState extends State<RainView> with TickerProviderStateMixin {
-  /// 雨点透明度
-  int _alpha;
+  // 雨点透明度
+  int? _alpha;
 
-  /// 初始距离左侧边距
-  double _left;
+  // 初始距离左侧边距
+  double? _left;
 
-  double _bottomBegin;
+  double? _bottomBegin;
 
-  /// 运动动画
-  AnimationController _controller;
-  Animation<double> _anim;
+  // 运动动画
+  AnimationController? _controller;
+  Animation<double>? _anim;
 
   @override
   void didChangeDependencies() {
@@ -36,15 +36,15 @@ class _RainState extends State<RainView> with TickerProviderStateMixin {
         AnimationController(vsync: this, duration: const Duration(seconds: 1))
           ..forward()
           ..addListener(() {
-            if (_anim.value <= -20) {
+            if (_anim!.value <= -20) {
               _initStartData();
-              _controller
+              _controller!
                 ..reset()
                 ..forward();
             }
           });
-    _anim = Tween(begin: _bottomBegin, end: _bottomBegin - 320)
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
+    _anim = Tween(begin: _bottomBegin, end: _bottomBegin! - 320)
+        .animate(CurvedAnimation(parent: _controller!, curve: Curves.linear));
   }
 
   @override
@@ -57,7 +57,7 @@ class _RainState extends State<RainView> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: _anim,
+      animation: _anim!,
       builder: (context, child) {
         return Positioned(
           child: Transform.rotate(
@@ -65,17 +65,17 @@ class _RainState extends State<RainView> with TickerProviderStateMixin {
             child: Container(
               height: 20,
               width: 1,
-              color: Colors.white.withAlpha(_alpha),
+              color: Colors.white.withAlpha(_alpha!),
             ),
           ),
-          left: _left + (260 - _anim.value) / (widget.bigWind ? 2 : 3),
-          bottom: _anim.value,
+          left: _left! + (260 - _anim!.value) / (widget.bigWind ? 2 : 3),
+          bottom: _anim!.value,
         );
       },
     );
   }
 
-  /// 初始化雨点开始的数据
+  // 初始化雨点开始的数据
   void _initStartData() {
     _left = getScreenWidth(context) - Random().nextInt(240) - 100;
     _alpha = Random().nextInt(140) + 30;

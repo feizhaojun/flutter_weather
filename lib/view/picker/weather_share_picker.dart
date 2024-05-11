@@ -1,9 +1,8 @@
 import 'dart:async';
 
-import 'package:esys_flutter_share/esys_flutter_share.dart';
+// import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_weather/common/colors.dart';
-import 'package:flutter_weather/generated/i18n.dart';
 import 'package:flutter_weather/model/data/weather_air_data.dart';
 import 'package:flutter_weather/model/data/weather_data.dart';
 import 'package:flutter_weather/model/holder/shared_depository.dart';
@@ -16,16 +15,16 @@ class WeatherSharePicker extends StatefulWidget {
   final String city;
 
   WeatherSharePicker(
-      {@required this.weather, @required this.air, @required this.city});
+      {required this.weather, required this.air, required this.city});
 
   @override
   State createState() => _WeatherPickState();
 
-  /// 分享天气
+  // 分享天气
   static void share(BuildContext context,
-      {@required Weather weather,
-      @required AirNowCity air,
-      @required String city}) {
+      {required Weather weather,
+      required AirNowCity air,
+      required String city}) {
     showDialog(
       context: context,
       builder: (context) =>
@@ -35,7 +34,7 @@ class WeatherSharePicker extends StatefulWidget {
 }
 
 class _WeatherPickState extends PageState<WeatherSharePicker> {
-  Timer _screenTimer;
+  Timer? _screenTimer;
 
   @override
   void initState() {
@@ -43,18 +42,18 @@ class _WeatherPickState extends PageState<WeatherSharePicker> {
 
     _screenTimer = Timer(const Duration(milliseconds: 100), () {
       if (SharedDepository().hammerShare) {
-        takeScreenshot().then((file) {
-          if (file != null) {
-            Share.file(
-                S.of(context).share,
-                "${widget.city}_${DateTime.now()}.png",
-                file.readAsBytesSync(),
-                "*/*");
-            pop(context);
-          }
-        });
+        // takeScreenshot().then((file) {
+        //   // TODO:
+        //   // Share.file(
+        //   //     S.of(context)?.share,
+        //   //     "${widget.city}_${DateTime.now()}.png",
+        //   //     file.readAsBytesSync(),
+        //   //     "*/*");
+        //   pop(context);
+        //         });
       } else {
-        Share.text(S.of(context).share, _getShareText(), "text/plain");
+        // TODO:
+        // Share.text(S.of(context)?.share, _getShareText(), "text/plain");
         pop(context);
       }
     });
@@ -123,27 +122,27 @@ class _WeatherPickState extends PageState<WeatherSharePicker> {
   }
 
   String _getShareText() {
-    final now = widget.weather?.now;
-    WeatherDailyForecast today;
-    WeatherDailyForecast tomorrow;
-    if (widget?.weather?.dailyForecast?.isNotEmpty == true) {
-      today = widget.weather.dailyForecast.first;
-      if (widget.weather.dailyForecast.length >= 2) {
-        tomorrow = widget.weather.dailyForecast[1];
+    final now = widget.weather.now;
+    WeatherDailyForecast today = WeatherDailyForecast();
+    WeatherDailyForecast tomorrow = WeatherDailyForecast();
+    if (widget.weather.dailyForecast?.isNotEmpty == true) {
+      today = widget.weather.dailyForecast!.first;
+      if (widget.weather.dailyForecast!.length >= 2) {
+        tomorrow = widget.weather.dailyForecast![1];
       }
     }
 
     return SharedDepository().hammerShare
         ? "${widget.city}天气："
-            "\n\n${widget.weather?.update?.loc} 发布："
+            "\n\n${widget.weather.update?.loc} 发布："
             "\n\n${now?.condTxt}，${now?.tmp}℃"
-            "\n\nPM2.5：${widget.air?.pm25}，${widget.air?.qlty}"
-            "\n\n今天：${today?.tmpMin}℃ ~ ${today?.tmpMax}℃，${today?.condTxtD}"
+            "\n\nPM2.5：${widget.air.pm25}，${widget.air.qlty}"
+            "\n\n今天：${today!.tmpMin}℃ ~ ${today.tmpMax}℃，${today.condTxtD}"
             "\n\n明天：${tomorrow?.tmpMin}℃ ~ ${tomorrow?.tmpMax}℃，${tomorrow?.condTxtD}"
         : "${widget.city}天气："
-            "\n${widget.weather?.update?.loc} 发布："
+            "\n${widget.weather.update?.loc} 发布："
             "\n${now?.condTxt}，${now?.tmp}℃"
-            "\nPM2.5：${widget.air?.pm25}，${widget.air?.qlty}"
+            "\nPM2.5：${widget.air.pm25}，${widget.air.qlty}"
             "\n今天：${today?.tmpMin}℃ ~ ${today?.tmpMax}℃，${today?.condTxtD}"
             "\n明天：${tomorrow?.tmpMin}℃ ~ ${tomorrow?.tmpMax}℃，${tomorrow?.condTxtD}";
   }

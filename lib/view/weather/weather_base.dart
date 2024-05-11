@@ -5,6 +5,8 @@ abstract class WeatherBase<T extends StatefulWidget> extends State<T>
     with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
+    // debugPrint("fullHeight: ${getStatusHeight(context)}");
+    debugPrint("WeatherBase:build > ");
     return Container(
       height: fullHeight,
       alignment: Alignment.bottomCenter,
@@ -16,10 +18,11 @@ abstract class WeatherBase<T extends StatefulWidget> extends State<T>
       getScreenHeight(context) -
       getStatusHeight(context) -
       getAppBarHeight() -
-      110;
+      160;
 
   @protected
   Widget buildView() {
-    return null;
+    // return null;
+    return Text('null');
   }
 }

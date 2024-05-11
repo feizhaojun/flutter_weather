@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_weather/model/data/egg_data.dart';
 import 'package:flutter_weather/model/data/mzi_data.dart';
 import 'package:flutter_weather/model/service/gift_egg_service.dart';
@@ -11,18 +10,18 @@ class GiftEggViewModel extends ViewModel {
   final data = StreamController<EggData>();
 
   final _service = GiftEggService();
-  final _photoData = StreamController<List<MziItem>>();
+  final _photoData = StreamController<List<MziItem>?>();
 
-  EggData _cacheData;
-  Stream<List<MziItem>> photoStream;
+  EggData? _cacheData;
+  Stream<List<MziItem>?>? photoStream;
 
   GiftEggViewModel() {
     photoStream = _photoData.stream.asBroadcastStream();
   }
 
-  Future<void> loadData({@required LoadType type}) async {
+  Future<void> loadData({required LoadType type}) async {
     if (selfLoading) return;
-    if (_cacheData != null && _cacheData.currentPage >= _cacheData.pageCount)
+    if (_cacheData != null && _cacheData!.currentPage! >= _cacheData!.pageCount!)
       return;
 
     selfLoading = true;
@@ -41,17 +40,17 @@ class GiftEggViewModel extends ViewModel {
       } else {
         _cacheData?.currentPage = egg.currentPage;
         _cacheData?.pageCount = egg.pageCount;
-        _cacheData?.comments?.addAll(egg.comments);
+        _cacheData?.comments?.addAll(egg.comments!);
       }
 
-      data.safeAdd(_cacheData);
-      _photoData.safeAdd(_cacheData?.comments
-          ?.map((v) => v?.pics?.isNotEmpty == true
-              ? v.pics.first
+      data.safeAdd(_cacheData!);
+      _photoData.safeAdd(_cacheData!.comments
+          ?.map((v) => v.pics?.isNotEmpty == true
+              ? v.pics!.first
               : "https://www.baidu.com/img/bd_logo1.png")
-          ?.map(
+          .map(
               (v) => MziItem(height: 459, width: 337, url: v, isImages: false))
-          ?.toList());
+          .toList());
     } on DioError catch (e) {
       selfLoadType = type;
       doError(e);

@@ -8,10 +8,10 @@ import Flutter
     private final let SEND_EMAIL = "weatherSendEmail"
     private final let SET_WALLPAPER = "weatherSetWallpaper"
 
-    private let locationHolder = LocationHolder()
+    // private let locationHolder = LocationHolder()
     
-    override func application(_ application: UIApplication,
-                              didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    // override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         GeneratedPluginRegistrant.register(with: self)
         initMethodChannel()
     
@@ -21,15 +21,19 @@ import Flutter
     func initMethodChannel() {
         let controller = window?.rootViewController as! FlutterBinaryMessenger;
         let channel = FlutterMethodChannel.init(name: CHANNEL_NAME, binaryMessenger: controller);
+
+        print("initMethodChannel");
+        
         
         channel.setMethodCallHandler({ (call, result) -> Void in
             switch (call.method) {
             case self.START_LOCATION:
-                self.locationHolder.startLocation(result: result)
+                print("startLocation");
+                // self.locationHolder.startLocation(result: result)
                 break
             case self.SEND_EMAIL:
                 let map = call.arguments as! [String:String?]
-                result(FeedbackUtil.sendEmail(email: map["email"]!!))
+                // result(FeedbackUtil.sendEmail(email: map["email"]!!))
                 break
             case self.SET_WALLPAPER:
                 // 无法直接设置壁纸，跳转到壁纸设置界面

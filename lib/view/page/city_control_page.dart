@@ -1,6 +1,5 @@
-import 'dart:math';
-
-import 'package:dragable_flutter_list/dragable_flutter_list.dart';
+// import 'package:dragable_flutter_list/dragable_flutter_list.dart';
+// import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_weather/common/colors.dart';
 import 'package:flutter_weather/generated/i18n.dart';
@@ -9,7 +8,7 @@ import 'package:flutter_weather/utils/system_util.dart';
 import 'package:flutter_weather/view/page/city_choose_page.dart';
 import 'package:flutter_weather/view/page/page_state.dart';
 import 'package:flutter_weather/view/widget/custom_app_bar.dart';
-import 'package:flutter_weather/viewmodel/city_control_viewmodel.dart';
+import 'package:flutter_weather/viewmodel/city_control_viewModel.dart';
 
 class CityControlPage extends StatefulWidget {
   @override
@@ -32,13 +31,13 @@ class CityControlState extends PageState<CityControlPage> {
       key: scafKey,
       appBar: CustomAppBar(
         title: Text(
-          S.of(context).cityControl,
+          S.of(context)?.cityControl ?? '',
           style: TextStyle(
             color: Colors.white,
             fontSize: 20,
           ),
         ),
-        color: Theme.of(context).accentColor,
+        color: Theme.of(context).primaryColor,
         leftBtn: IconButton(
           icon: Icon(
             Icons.arrow_back,
@@ -58,7 +57,7 @@ class CityControlState extends PageState<CityControlPage> {
 
               final result = await _viewModel.addCity(location);
               if (!result) {
-                showSnack(text: S.of(context).repeatCity);
+                showSnack(text: S.of(context)?.repeatCity ?? '');
               }
             },
           ),
@@ -67,21 +66,20 @@ class CityControlState extends PageState<CityControlPage> {
       body: StreamBuilder(
         stream: _viewModel.cities.stream,
         builder: (context, snapshot) {
-          final List<String> cities = snapshot.data ?? [];
+          final List<String?> cities = snapshot.data ?? [];
 
           return StreamBuilder(
             stream: _viewModel.weathers.stream,
             builder: (context, snapshot) {
               final List<Weather> weathers = snapshot.data ?? [];
-
-              return DragAndDropList(
-                min(cities.length, weathers.length),
-                canBeDraggedTo: (oldIndex, newIndex) =>
-                    oldIndex != 0 && newIndex != 0,
-                itemBuilder: (context, index) {
+              return ReorderableListView.builder(
+                // items: cities,
+                itemCount: cities.length,
+                itemBuilder: (BuildContext context, int index) {
                   if (index == 0) {
                     return _buildCityItem(
-                      city: cities[index],
+                      key: ValueKey(index),
+                      city: cities[index] ?? '',
                       data: weathers[index],
                       isFirst: index == 0,
                     );
@@ -89,7 +87,8 @@ class CityControlState extends PageState<CityControlPage> {
                     return Dismissible(
                       key: Key("Dismissible${cities[index]}"),
                       child: _buildCityItem(
-                        city: cities[index],
+                        key: ValueKey(index),
+                        city: cities[index] ?? '',
                         data: weathers[index],
                         isFirst: index == 0,
                       ),
@@ -97,7 +96,14 @@ class CityControlState extends PageState<CityControlPage> {
                     );
                   }
                 },
-                onDragFinish: _viewModel.cityIndexChange,
+                onReorder: (int oldIndex, int newIndex) {
+                  _viewModel.cityIndexChange(
+                      oldIndex, oldIndex < newIndex ? newIndex - 1 : newIndex);
+                  // setState(() {
+                  //   final String? item = cities.removeAt(oldIndex);
+                  //   cities.insert(oldIndex < newIndex ? newIndex - 1 : newIndex, item);
+                  // });
+                },
               );
             },
           );
@@ -106,14 +112,22 @@ class CityControlState extends PageState<CityControlPage> {
     );
   }
 
-  /// 城市列表Item
+  // 城市列表Item
   Widget _buildCityItem(
-      {@required String city, @required Weather data, @required bool isFirst}) {
-    final now = data?.now;
+      {required String city,
+      required Weather data,
+      required bool isFirst,
+      required Key key}) {
+    final now = data.now;
 
     return Card(
-      margin: const EdgeInsets.all(8),
+      key: key,
+      shape: Border(  
+        bottom: BorderSide(color: Colors.grey.shade300, width: 1.0, style: BorderStyle.solid),
+      ),
+      margin: const EdgeInsets.all(0),
       color: Colors.white,
+      elevation: 0.0,
       child: Container(
         height: 60,
         padding: const EdgeInsets.only(left: 12, right: 12),
@@ -128,7 +142,7 @@ class CityControlState extends PageState<CityControlPage> {
               child: isFirst
                   ? Icon(
                       Icons.location_on,
-                      color: Theme.of(context).accentColor,
+                      color: Theme.of(context).primaryColor,
                     )
                   : Container(),
             ),
@@ -141,18 +155,16 @@ class CityControlState extends PageState<CityControlPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        now?.condTxt ?? S.of(context).unknown,
-                        style:
-                            TextStyle(fontSize: 12, color: AppColor.text1),
+                        now?.condTxt ?? S.of(context)?.unknown ?? '',
+                        style: TextStyle(fontSize: 12, color: AppColor.text1),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 4),
                         child: Text(
                           now?.tmp != null
-                              ? "${now.tmp}℃"
-                              : S.of(context).unknown,
-                          style: TextStyle(
-                              fontSize: 12, color: AppColor.text1),
+                              ? "${now!.tmp}℃"
+                              : S.of(context)?.unknown ?? '',
+                          style: TextStyle(fontSize: 12, color: AppColor.text1),
                         ),
                       ),
                     ],
@@ -160,7 +172,7 @@ class CityControlState extends PageState<CityControlPage> {
                   Padding(
                     padding: const EdgeInsets.only(left: 6),
                     child: Image.asset(
-                      "images/${now?.condCode ?? 100}.png",
+                      "images/${now?.condCode ?? 999}.png",
                       height: 32,
                       width: 32,
                     ),

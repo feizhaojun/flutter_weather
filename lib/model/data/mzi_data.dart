@@ -8,12 +8,12 @@ class MziData {
 }
 
 class MziItem {
-  String url;
-  String link;
-  String refer;
-  int height;
-  int width;
-  bool isImages;
+  String? url;
+  String? link;
+  String? refer;
+  int? height;
+  int? width;
+  bool? isImages;
 
   MziItem(
       {this.url,
@@ -24,8 +24,6 @@ class MziItem {
       this.isImages});
 
   MziItem.fromJson(Map<String, dynamic> json) {
-    if (json == null) return;
-
     url = json['url'];
     link = json['link'];
     refer = json['refer'];

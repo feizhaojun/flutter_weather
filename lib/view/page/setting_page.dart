@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/block_picker.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_weather/common/colors.dart';
 import 'package:flutter_weather/generated/i18n.dart';
 import 'package:flutter_weather/model/holder/event_send_holder.dart';
@@ -10,7 +10,7 @@ import 'package:flutter_weather/view/page/page_state.dart';
 import 'package:flutter_weather/view/page/setting_module_page.dart';
 import 'package:flutter_weather/view/widget/custom_app_bar.dart';
 import 'package:flutter_weather/view/widget/loading_view.dart';
-import 'package:flutter_weather/viewmodel/setting_viewmodel.dart';
+import 'package:flutter_weather/viewmodel/setting_viewModel.dart';
 
 class SettingPage extends StatefulWidget {
   @override
@@ -37,13 +37,13 @@ class SettingState extends PageState<SettingPage> {
     return Scaffold(
       appBar: CustomAppBar(
         title: Text(
-          S.of(context).setting,
+          S.of(context)?.setting ?? '',
           style: TextStyle(
             color: Colors.white,
             fontSize: 20,
           ),
         ),
-        color: Theme.of(context).accentColor,
+        color: Theme.of(context).primaryColor,
         leftBtn: IconButton(
           icon: Icon(
             Icons.arrow_back,
@@ -57,7 +57,7 @@ class SettingState extends PageState<SettingPage> {
         child: StreamBuilder(
           stream: _viewModel.cacheSize.stream,
           builder: (context, snapshot) {
-            final cacheSize = snapshot.data ?? S.of(context).calculating;
+            final cacheSize = snapshot.data ?? S.of(context)?.calculating;
 
             return StreamBuilder(
               stream: _viewModel.hammerShare.stream,
@@ -68,34 +68,34 @@ class SettingState extends PageState<SettingPage> {
                   physics: const AlwaysScrollableScrollPhysics(
                       parent: const ClampingScrollPhysics()),
                   children: <Widget>[
-                    // 天气
-                    _buildTitle(title: S.of(context).weather),
-                    _buildItem(
-                      title: S.of(context).shareType,
-                      content: hammerShare
-                          ? S.of(context).likeHammer
-                          : S.of(context).textOnly,
-                      onTap: () => _typeDialogFunc(hammerShare: hammerShare),
-                    ),
+                    // // 天气
+                    // _buildTitle(title: S.of(context)?.weather ?? ''),
+                    // _buildItem(
+                    //   title: S.of(context)?.shareType ?? '',
+                    //   content: hammerShare
+                    //       ? S.of(context)?.likeHammer ?? ''
+                    //       : S.of(context)?.textOnly ?? '',
+                    //   onTap: () => _typeDialogFunc(hammerShare: hammerShare),
+                    // ),
 
                     // 通用
-                    _buildTitle(title: S.of(context).commonUse),
+                    _buildTitle(title: S.of(context)?.commonUse ?? ''),
                     _buildItem(
-                      title: S.of(context).themeColor,
+                      title: S.of(context)?.themeColor ?? '',
                       content: getThemeName(),
                       onTap: () {
-                        Color selectColor = Theme.of(context).accentColor;
+                        Color selectColor = Theme.of(context).primaryColor;
                         showDialog(
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: Text(S.of(context).chooseTheme),
+                              title: Text(S.of(context)?.chooseTheme ?? ''),
                               content: Container(
                                 height: 180,
                                 child: BlockPicker(
                                   availableColors: [
                                     AppColor.lapisBlue,
-                                    AppColor.paleDogWood,
+                                    // AppColor.paleDogWood,
                                     AppColor.greenery,
                                     AppColor.primroseYellow,
                                     AppColor.flame,
@@ -104,17 +104,17 @@ class SettingState extends PageState<SettingPage> {
                                     AppColor.pinkYarrow,
                                     AppColor.niagara,
                                   ],
-                                  pickerColor: Theme.of(context).accentColor,
+                                  pickerColor: Theme.of(context).primaryColor,
                                   onColorChanged: (color) =>
                                       selectColor = color,
                                 ),
                               ),
                               actions: <Widget>[
-                                FlatButton(
+                                TextButton(
                                   onPressed: () => pop(context),
-                                  child: Text(S.of(context).cancel),
+                                  child: Text(S.of(context)?.cancel ?? ''),
                                 ),
-                                FlatButton(
+                                TextButton(
                                   onPressed: () {
                                     pop(context);
                                     SharedDepository()
@@ -124,7 +124,7 @@ class SettingState extends PageState<SettingPage> {
                                                 tag: "themeChange",
                                                 event: selectColor));
                                   },
-                                  child: Text(S.of(context).certain),
+                                  child: Text(S.of(context)?.certain ?? ''),
                                 ),
                               ],
                             );
@@ -132,16 +132,16 @@ class SettingState extends PageState<SettingPage> {
                         );
                       },
                     ),
+                    // Container(height: 1, color: AppColor.line2),
+                    // _buildItem(
+                    //   title: S.of(context)?.moduleControl ?? '',
+                    //   content: S.of(context)?.openOrCloseModule ?? '',
+                    //   onTap: () => push(context, page: SettingModulePage()),
+                    // ),
                     Container(height: 1, color: AppColor.line2),
                     _buildItem(
-                      title: S.of(context).moduleControl,
-                      content: S.of(context).openOrCloseModule,
-                      onTap: () => push(context, page: SettingModulePage()),
-                    ),
-                    Container(height: 1, color: AppColor.line2),
-                    _buildItem(
-                      title: S.of(context).clearCache,
-                      content: cacheSize,
+                      title: S.of(context)?.clearCache ?? '',
+                      content: cacheSize ?? '',
                       onTap: () => _viewModel.clearCache(),
                     ),
                   ],
@@ -154,23 +154,23 @@ class SettingState extends PageState<SettingPage> {
     );
   }
 
-  /// 小标题
-  Widget _buildTitle({@required String title}) {
+  // 小标题
+  Widget _buildTitle({required String title}) {
     return Container(
       alignment: Alignment.centerLeft,
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       child: Text(
         title,
-        style: TextStyle(fontSize: 14, color: Theme.of(context).accentColor),
+        style: TextStyle(fontSize: 14, color: Theme.of(context).primaryColor),
       ),
     );
   }
 
-  /// 每个Item
+  // 每个Item
   Widget _buildItem(
-      {@required String title,
-      @required String content,
-      @required VoidCallback onTap}) {
+      {required String title,
+      required String content,
+      required VoidCallback onTap}) {
     return Material(
       child: InkWell(
         onTap: onTap,
@@ -197,40 +197,41 @@ class SettingState extends PageState<SettingPage> {
     );
   }
 
-  /// 获取主题名字
+  // 获取主题名字
   String getThemeName() {
-    final color = Theme.of(context).accentColor;
+    // final color = Theme.of(context).primaryColor;
+    final color = AppColor.niagara;
 
     if (color == AppColor.lapisBlue) {
-      return S.of(context).colorLapisBlue;
+      return S.of(context)?.colorLapisBlue ?? '';
     } else if (color == AppColor.paleDogWood) {
-      return S.of(context).colorPaleDogWood;
+      return S.of(context)?.colorPaleDogWood ?? '';
     } else if (color == AppColor.greenery) {
-      return S.of(context).colorGreenery;
+      return S.of(context)?.colorGreenery ?? '';
     } else if (color == AppColor.primroseYellow) {
-      return S.of(context).colorPrimroseYellow;
+      return S.of(context)?.colorPrimroseYellow ?? '';
     } else if (color == AppColor.flame) {
-      return S.of(context).colorFlame;
+      return S.of(context)?.colorFlame ?? '';
     } else if (color == AppColor.islandParadise) {
-      return S.of(context).colorIslandParadise;
+      return S.of(context)?.colorIslandParadise ?? '';
     } else if (color == AppColor.kale) {
-      return S.of(context).colorKale;
+      return S.of(context)?.colorKale ?? '';
     } else if (color == AppColor.pinkYarrow) {
-      return S.of(context).colorPinkYarrow;
+      return S.of(context)?.colorPinkYarrow ?? '';
     } else if (color == AppColor.niagara) {
-      return S.of(context).colorNiagara;
+      return S.of(context)?.colorNiagara ?? '';
     } else {
-      return S.of(context).colorNone;
+      return S.of(context)?.colorNone ?? '';
     }
   }
 
-  /// 天气分享形式的弹窗
-  void _typeDialogFunc({@required bool hammerShare}) {
+  // 天气分享形式的弹窗
+  void _typeDialogFunc({required bool hammerShare}) {
     showDiffDialog(
       context,
       contentPadding: const EdgeInsets.only(),
-      title: Text("${S.of(context).weather}${S.of(context).shareType}"),
-      yesText: S.of(context).close,
+      title: Text("${S.of(context)?.weather}${S.of(context)?.shareType}"),
+      yesText: S.of(context)?.close,
       onPressed: () => pop(context),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -254,13 +255,13 @@ class SettingState extends PageState<SettingPage> {
                       size: 22,
                       color: SharedDepository().hammerShare
                           ? AppColor.text2
-                          : Theme.of(context).accentColor,
+                          : Theme.of(context).primaryColor,
                     ),
                     Padding(
                       padding:
                           const EdgeInsets.only(left: 4, top: 6, bottom: 6),
                       child: Text(
-                        S.of(context).textOnly,
+                        S.of(context)?.textOnly ?? '',
                         style: TextStyle(
                           fontSize: 16,
                           color: AppColor.text1,
@@ -290,14 +291,14 @@ class SettingState extends PageState<SettingPage> {
                           : Icons.radio_button_unchecked,
                       size: 22,
                       color: SharedDepository().hammerShare
-                          ? Theme.of(context).accentColor
+                          ? Theme.of(context).primaryColor
                           : AppColor.text2,
                     ),
                     Padding(
                       padding:
                           const EdgeInsets.only(left: 4, top: 6, bottom: 6),
                       child: Text(
-                        S.of(context).likeHammer,
+                        S.of(context)?.likeHammer ?? '',
                         style: TextStyle(
                           fontSize: 16,
                           color: AppColor.text1,

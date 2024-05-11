@@ -5,39 +5,39 @@ import 'package:flutter_weather/utils/system_util.dart';
 
 /// 波浪控件
 class WaveView extends StatefulWidget {
-  /// 振幅
+  // 振幅
   final double amplitude;
 
-  /// 振幅显示的百分比
+  // 振幅显示的百分比
   final double amplitudePercent;
 
-  /// 波浪颜色
+  // 波浪颜色
   final Color color;
 
-  /// 波浪的数量
+  // 波浪的数量
   final int waveNum;
 
-  /// 波浪循环周期(毫秒)
+  // 波浪循环周期(毫秒)
   final int cycle;
 
-  /// 波浪方向
+  // 波浪方向
   final WaveDirection direction;
 
-  /// 随着波浪起伏的图片地址
-  final String imgUrl;
+  // 随着波浪起伏的图片地址
+  final String? imgUrl;
 
-  final Size imgSize;
+  final Size? imgSize;
 
-  /// 图片距离右边屏幕的距离
+  // 图片距离右边屏幕的距离
   final double imgRight;
 
-  final double height;
+  final double? height;
 
-  final double width;
+  final double? width;
 
   WaveView(
-      {@required this.amplitude,
-      @required this.color,
+      {required this.amplitude,
+      required this.color,
       this.imgUrl,
       this.amplitudePercent = 1,
       this.imgSize = const Size(60, 18),
@@ -54,7 +54,7 @@ class WaveView extends StatefulWidget {
 }
 
 class _WaveState extends State<WaveView> with TickerProviderStateMixin {
-  AnimationController _controller;
+  AnimationController? _controller;
 
   @override
   void initState() {
@@ -77,23 +77,23 @@ class _WaveState extends State<WaveView> with TickerProviderStateMixin {
     // widget宽和高
     final width = widget.width ?? getScreenWidth(context);
     final height =
-        (widget.height ?? getScreenHeight(context)) - widget.imgSize.width / 2;
+        (widget.height ?? getScreenHeight(context)) - widget.imgSize!.width / 2;
     // cos对应2*pi长度时的高度
     final cosHeight = widget.amplitude * (2 * pi) / width;
     // 小船吃水高度
     const eatWater = 2;
     // 小船的x坐标
-    final boatX = width - widget.imgRight - widget.imgSize.width / 2;
+    final boatX = width - widget.imgRight - widget.imgSize!.width / 2;
 
     return AnimatedBuilder(
-      animation: _controller,
+      animation: _controller!,
       builder: (context, child) {
         final offsetX = widget.direction == WaveDirection.LEFT
-            ? _controller.value
-            : -_controller.value;
+            ? _controller!.value
+            : -_controller!.value;
 
         return Container(
-          height: height + widget.imgSize.height,
+          height: height + widget.imgSize!.height,
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: <Widget>[
@@ -130,11 +130,11 @@ class _WaveState extends State<WaveView> with TickerProviderStateMixin {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Image.asset(
-                                widget.imgUrl,
-                                width: widget.imgSize.width,
-                                height: widget.imgSize.height,
+                                widget.imgUrl!,
+                                width: widget.imgSize!.width,
+                                height: widget.imgSize!.height,
                               ),
-                              Container(height: widget.imgSize.height),
+                              Container(height: widget.imgSize!.height),
                             ],
                           ),
                         ),
@@ -145,7 +145,7 @@ class _WaveState extends State<WaveView> with TickerProviderStateMixin {
                               (1 +
                                   widget.amplitudePercent *
                                       _getSinY(boatX, width, offsetX)) -
-                          widget.imgSize.height -
+                          widget.imgSize!.height -
                           eatWater,
                     )
                   : Container(),
@@ -190,30 +190,30 @@ double _getSinY(double xPoint, double width, double xOffset) {
     _sinCache[x] = sin(2 * pi * x / width);
   }
 
-  return _sinCache[x];
+  return _sinCache[x]!;
 }
 
 class _WavePainter extends CustomPainter {
-  /// 振幅
+  // 振幅
   final double amplitude;
 
-  /// 振幅显示的百分比
+  // 振幅显示的百分比
   final double amplitudePercent;
 
-  /// 波浪颜色
+  // 波浪颜色
   final Color color;
 
-  /// x轴偏移量
+  // x轴偏移量
   final double offsetX;
 
-  /// 波浪的数量
+  // 波浪的数量
   final int waveNum;
 
-  /// 第几条波浪
+  // 第几条波浪
   final int waveIndex;
 
-  /// y轴的中心点
-  double _centerY;
+  // y轴的中心点
+  double? _centerY;
 
   _WavePainter(this.amplitude, this.amplitudePercent, this.offsetX, this.color,
       this.waveNum, this.waveIndex);
@@ -237,7 +237,7 @@ class _WavePainter extends CustomPainter {
           amplitudePercent *
           _getSinY(i + waveOffset, size.width, offsetX);
 
-      path.lineTo(i, sinY + _centerY);
+      path.lineTo(i, sinY + _centerY!);
     }
     path
       ..lineTo(size.width, size.height)

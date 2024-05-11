@@ -12,19 +12,19 @@ import 'weather_base.dart';
 class WeatherSunny extends StatefulWidget {
   final Color color;
 
-  WeatherSunny({Key key, @required this.color}) : super(key: key);
+  WeatherSunny({Key? key, required this.color}) : super(key: key);
 
   @override
   State createState() => WeatherSunnyState();
 }
 
 class WeatherSunnyState extends WeatherBase<WeatherSunny> {
-  /// 小船动画
-  AnimationController _boatController;
-  Animation<double> _boatAnim;
+  // 小船动画
+  AnimationController? _boatController;
+  Animation<double>? _boatAnim;
 
-  /// 太阳动画
-  Animation<double> _sunAnim;
+  // 太阳动画
+  Animation<double>? _sunAnim;
 
   @override
   void initState() {
@@ -34,7 +34,7 @@ class WeatherSunnyState extends WeatherBase<WeatherSunny> {
         AnimationController(vsync: this, duration: const Duration(seconds: 4))
           ..forward();
     _boatAnim = Tween(begin: 0.0, end: 1.0)
-        .animate(CurvedAnimation(parent: _boatController, curve: Curves.ease));
+        .animate(CurvedAnimation(parent: _boatController!, curve: Curves.ease));
   }
 
   @override
@@ -55,7 +55,7 @@ class WeatherSunnyState extends WeatherBase<WeatherSunny> {
       }
       final sunEnd = (getScreenWidth(context) - 78) * now / 12 + 39;
       _sunAnim = Tween(begin: 39.0, end: sunEnd).animate(
-          CurvedAnimation(parent: _boatController, curve: Curves.ease));
+          CurvedAnimation(parent: _boatController!, curve: Curves.ease));
     }
   }
 
@@ -79,27 +79,27 @@ class WeatherSunnyState extends WeatherBase<WeatherSunny> {
         children: <Widget>[
           // 太阳
           AnimatedBuilder(
-            animation: _sunAnim,
+            animation: _sunAnim!,
             builder: (context, child) {
               return Positioned(
                 child: isDay ? SunView(outColor: widget.color) : MoonView(),
-                left: _sunAnim.value - 19,
-                bottom: sin(pi * _sunAnim.value / width) * 265,
+                left: _sunAnim!.value - 19,
+                bottom: sin(pi * _sunAnim!.value / width) * 265,
               );
             },
           ),
 
           // 波浪
           AnimatedBuilder(
-            animation: _boatAnim,
+            animation: _boatAnim!,
             builder: (context, child) {
               return WaveView(
                 amplitude: 15,
-                amplitudePercent: _boatAnim.value,
+                amplitudePercent: _boatAnim!.value,
                 color: isDay ? Colors.white : Color(0xE63A66CF),
                 waveNum: 2,
                 height: 120,
-                imgRight: 100 * _boatAnim.value,
+                imgRight: 100 * _boatAnim!.value,
                 imgUrl: "images/ic_boat_${isDay ? "day" : "night"}.png",
                 imgSize: const Size(60, 18),
               );
