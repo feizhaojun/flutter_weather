@@ -77,6 +77,7 @@ class WeatherAppState extends State<WeatherApp> with StreamSubController {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       // home: SplashPage(),
       home: HomePage(),
       title: "小鸭天气",

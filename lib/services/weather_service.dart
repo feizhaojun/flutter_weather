@@ -17,7 +17,7 @@ class WeatherService extends Service {
   Future<City> getCity(
       {required String longitude, required String latitude}) async {
     final response = await get(
-        "https://weatherapi.market.xiaomi.com/wtr-v3/location/city/geo?locale=zh&longitude=$longitude&latitude=$latitude",
+        "https://feizhaojun.com/api/weather/city/location?longitude=$longitude&latitude=$latitude",
         cancelToken: cancelToken);
     return await compute(_formatCity, response.data);
   }
@@ -29,12 +29,12 @@ class WeatherService extends Service {
 
   Future<Weather> getWeather({required City city}) async {
     final response = await get(
-        "https://weatherapi.market.xiaomi.com/wtr-v3/weather/all?locale=zh&isLocated=false&days=15&appKey=weather20151024&sign=zUFJoAR2ZVrDy1vF3D07&isGlobal=false&latitude=${city.latitude}&longitude=${city.longitude}&locationKey=${city.key}",
+        "https://feizhaojun.com/api/weather/all?latitude=${city.latitude}&longitude=${city.longitude}&locationKey=${city.key}",
         cancelToken: cancelToken);
     response.data["locationKey"] = city.key;
     response.data["updatedTime"] = DateTime.now().toString();
     SharedDepository().setString(city.key!, jsonEncode(response.data));
-    debugPrint("WeatherService:getWeather: ${response.data}");
+    debugPrint("WeatherService:getWeather: ${jsonEncode(response.data)}");
     return await compute(_formatWeather, response.data);
   }
 
