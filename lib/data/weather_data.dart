@@ -9,8 +9,8 @@ class Aqi {
   Aqi({this.aqi, this.suggest});
 
   Aqi.fromJson(Map<String, dynamic> json) {
-    aqi = json['aqi'];
-    suggest = json['suggest'];
+    aqi = json['aqi'] ?? null;
+    suggest = json['suggest'] ?? null;
   }
 
   Map<String, dynamic> toJson() {
@@ -56,7 +56,9 @@ class Weather {
       dailyForecast = <WeatherDailyForecast>[];
       json['forecastDaily']['sunRiseSet']['value'].asMap().forEach((k, v) {
         dailyForecast!.add(WeatherDailyForecast.fromJson({
-          'aqi': json['forecastDaily']['aqi']['value'][k],
+          'aqi': json['forecastDaily']['aqi']['status'] == 0
+              ? json['forecastDaily']['aqi']['value'][k]
+              : null,
           'precipitationProbability': json['forecastDaily']
               ['precipitationProbability']['value'][k],
           'temperature': json['forecastDaily']['temperature']['value'][k],
@@ -68,9 +70,11 @@ class Weather {
     }
     if (json['forecastHourly'] != null) {
       hourly = <WeatherHourly>[];
-      json['forecastHourly']['aqi']['value'].asMap().forEach((k, v) {
+      json['forecastHourly']['weather']['value'].asMap().forEach((k, v) {
         hourly!.add(WeatherHourly.fromJson({
-          'aqi': v,
+          'aqi': json['forecastHourly']['aqi']['value'] != null
+              ? json['forecastHourly']['aqi']['value'][k]
+              : null,
           'temperature': json['forecastHourly']['temperature']['value'][k],
           'weather': json['forecastHourly']['weather']['value'][k],
           'wind': json['forecastHourly']['wind']['value'][k],
@@ -84,9 +88,12 @@ class Weather {
         dailyForecast?.add(WeatherDailyForecast.fromJson(v));
       });
     }
-    probability =
-        json['minutely']['probability']['probabilityDescV2'].toString();
-    precipitation = json['minutely']['precipitation']['description'].toString();
+    probability = json['minutely'] != null
+        ? json['minutely']['probability']['probabilityDescV2'].toString()
+        : '暂无降水预报信息';
+    precipitation = json['minutely'] != null
+        ? json['minutely']['precipitation']['description'].toString()
+        : '无';
     aqi = Aqi.fromJson(json['aqi']);
   }
 

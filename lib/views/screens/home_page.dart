@@ -1,8 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_weather/common/colors.dart'; // 公共配色
+import 'package:flutter_weather/models/page_modules_model.dart';
 import 'package:flutter_weather/models/shared_depository.dart';
-// Screen
+// Screens
 import 'package:flutter_weather/views/screens/weather_page.dart';
+// Widgets
+import 'package:flutter_weather/views/widgets/empty.dart';
+// Utils
+import 'package:connectivity_plus/connectivity_plus.dart';
 // TODO:
 // import 'dart:async';
 import 'package:flutter_weather/utils/system_util.dart';
@@ -15,10 +22,10 @@ import 'package:flutter_weather/model/holder/event_send_holder.dart';
 // import 'package:flutter_weather/model/holder/weather_holder.dart';
 // import 'package:flutter_weather/view/page/about_page.dart';
 // import 'package:flutter_weather/view/page/fav_page.dart';
-import 'package:flutter_weather/view/page/ganhuo_page.dart';
-import 'package:flutter_weather/view/page/gift_page.dart';
+// import 'package:flutter_weather/view/page/ganhuo_page.dart';
+// import 'package:flutter_weather/view/page/gift_page.dart';
 import 'package:flutter_weather/view/page/page_state.dart';
-import 'package:flutter_weather/view/page/read_page.dart';
+// import 'package:flutter_weather/view/page/read_page.dart';
 // import 'package:flutter_weather/view/page/setting_page.dart';
 // import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
@@ -68,18 +75,38 @@ class HomeState extends PageState<HomePage> {
     //   SharedDepository().setsShouldClean(false);
     // }
 
+    PageModulesModel().currentPage?.listen((page) {
+      debugPrint("HomePage:PageModulesModel.currentPage: $page");
+      setState(() {
+        _currentPage = page;
+      });
+    }).bindLife(this);
+
+    // 检测网络
+    StreamSubscription<List<ConnectivityResult>> connectivitySubscription =
+        Connectivity()
+            .onConnectivityChanged
+            .listen((List<ConnectivityResult> result) {
+      if (result.contains(ConnectivityResult.none)) {
+        setState(() {
+          _currentPage = PageType.NO_NETWORK_PERMISSION;
+        });
+      } else {
+        setState(() {
+          _currentPage = PageType.WEATHER;
+        });
+      }
+    });
+
     _initModules();
   }
 
-  // @override
-  // void dispose() {
-  //   FavHolder().dispose();
-  //   AppVersionHolder().dispose();
-  //   WeatherHolder().dispose();
-  //   _exitTimer?.cancel();
+  @override
+  void dispose() {
+    // connectivitySubscription.cancel();
 
-  //   super.dispose();
-  // }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -245,6 +272,18 @@ class HomeState extends PageState<HomePage> {
     return _currentPage != null
         ? Stack(
             children: <Widget>[
+              // 无定位权限、无网络权限
+              Offstage(
+                offstage: _currentPage != PageType.NO_LOCATION_PERMISSION &&
+                    _currentPage != PageType.NO_NETWORK_PERMISSION,
+                // TODO: TickerMode
+                child: TickerMode(
+                  enabled: _currentPage == PageType.NO_LOCATION_PERMISSION ||
+                      _currentPage == PageType.NO_NETWORK_PERMISSION,
+                  child: Empty(type: _currentPage),
+                  // child: _pageTypeMap[PageType.WEATHER]! ? WeatherPage(key: _weatherKey) : Container(),
+                ),
+              ),
               // 天气
               Offstage(
                 offstage: _currentPage != PageType.WEATHER,
@@ -348,28 +387,30 @@ class HomeState extends PageState<HomePage> {
     );
   }
 
-  /// 初始化首次启动的界面
+  // 初始化首次启动的界面
   void _initModules() {
+    _currentPage = PageType.NO_NETWORK_PERMISSION;
+
     // TODO: pageModules 的初始值从哪来？
     // _pageModules
     //   ..clear()
     //   ..addAll(SharedDepository().pageModules);
-    _pageModules
-      ..clear()
-      ..addAll(SharedDepository().pageModules);
+    // _pageModules
+    //   ..clear()
+    //   ..addAll(SharedDepository().pageModules);
 
-    // 优先显示天气
-    int index =
-        _pageModules.indexWhere((v) => v.page == PageType.WEATHER && v.open);
-    if (index == -1) {
-      // 当天气功能被关闭时，显示第一个未被关闭的界面
-      index = _pageModules.indexWhere((v) => v.open);
-    }
+    // // 优先显示天气
+    // int index =
+    //     _pageModules.indexWhere((v) => v.page == PageType.WEATHER && v.open);
+    // if (index == -1) {
+    //   // 当天气功能被关闭时，显示第一个未被关闭的界面
+    //   index = _pageModules.indexWhere((v) => v.open);
+    // }
 
-    if (index != -1) {
-      _currentPage = _pageModules[index].page;
-      // _pageTypeMap[_pageModules[index].page] = true;
-    }
+    // if (index != -1) {
+    //   _currentPage = _pageModules[index].page;
+    //   // _pageTypeMap[_pageModules[index].page] = true;
+    // }
   }
 
   // // 当页面顺序改变时调用

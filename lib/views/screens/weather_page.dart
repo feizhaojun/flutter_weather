@@ -4,14 +4,21 @@ import 'package:flutter/material.dart';
 // Data
 import 'package:flutter_weather/data/city_data.dart';
 import 'package:flutter_weather/data/weather_data.dart';
+import 'package:flutter_weather/model/data/page_module_data.dart';
+import 'package:flutter_weather/models/page_modules_model.dart';
 import 'package:flutter_weather/models/shared_depository.dart';
 // Model
 import 'package:flutter_weather/models/test_model.dart';
 import 'package:flutter_weather/models/city_model.dart';
 import 'package:flutter_weather/models/weather_model.dart';
+import 'package:flutter_weather/utils/view_util.dart';
+import 'package:flutter_weather/view/widget/custom_app_bar.dart';
 import 'package:flutter_weather/views/screens/weather_city_page.dart';
 // Widget
 import 'package:flutter_weather/views/widgets/city_switcher.dart';
+// Utils
+import 'package:permission_handler/permission_handler.dart';
+import 'package:app_settings/app_settings.dart';
 // TODO:
 import 'package:flutter_weather/view/page/page_state.dart';
 import 'package:flutter_weather/view/weather/weather_view.dart';
@@ -21,6 +28,7 @@ import 'package:flutter_weather/generated/i18n.dart';
 // import 'package:flutter_weather/model/data/weather_data.dart';
 // import 'package:flutter_weather/model/holder/event_send_holder.dart';
 import 'package:flutter_weather/utils/system_util.dart';
+import 'package:geolocator/geolocator.dart';
 // import 'package:flutter_weather/view/page/city_control_page.dart';
 // import 'package:flutter_weather/view/page/weather_city_page.dart';
 // import 'package:flutter_weather/view/weather/weather_view.dart';
@@ -138,6 +146,8 @@ class WeatherState extends PageState<WeatherPage>
       ).animate(_animationController);
     });
 
+    _checkLocationPermision();
+
     // _viewModel.loadData(isRefresh: false);
   }
 
@@ -195,86 +205,73 @@ class WeatherState extends PageState<WeatherPage>
                     pageValue: pageValue,
                   ),
                 ),
-                // Text(testString),
+                // 标题栏
+                CustomAppBar(
+                  title: Text(""),
+                  color: Colors.transparent, // TODO:
+                  showShadow: false,
+                  // TODO: 标题栏左侧按钮
+                  // leftBtn: IconButton(
+                  //   icon: Icon(
+                  //     Icons.menu,
+                  //     color: Colors.white,
+                  //   ),
+                  //   // 打开抽屉菜单
+                  //   onPressed: () => EventSendHolder()
+                  //       .sendEvent(tag: "homeDrawerOpen", event: true),
+                  // ),
+                  // TODO: 标题栏右侧按钮
+                  rightBtns: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.my_location,
+                        color: Colors.white,
+                      ),
+                      // 打开抽屉菜单
+                      onPressed: () => _checkLocationPermision(),
+                    ),
+                    // PopupMenuButton(
+                    //   icon: Icon(
+                    //     Icons.more_vert,
+                    //     color: Colors.white,
+                    //   ),
+                    //   itemBuilder: (context) => [
+                    //     // PopupMenuItem(
+                    //     //   value: "share",
+                    //     //   child: Text(S.of(context)?.share ?? ''),
+                    //     // ),
+                    //     PopupMenuItem(
+                    //       value: "cities",
+                    //       child: Text(S.of(context)?.cityControl ?? ''),
+                    //     ),
+                    //     PopupMenuItem(
+                    //       value: "weathers",
+                    //       child: Text(S.of(context)?.weathersView ?? ''),
+                    //     ),
+                    //   ],
+                    //   onSelected: (value) {
+                    //     switch (value) {
+                    //       // case "share":
+                    //       //   if (pair.b == null) return;
+                    //       //   WeatherSharePicker.share(context,
+                    //       //       weather: pair.a,
+                    //       //       air: pair.b!,
+                    //       //       city: location);
+                    //       //   break;
+                    //       case "cities":
+                    //         // push(context, page: CityControlPage());
+                    //         break;
+                    //       case "weathers":
+                    //         _showWeathersDialog();
+                    //         break;
+                    //     }
+                    //   },
+                    // ),
+                  ],
+                ),
               ],
             ),
           ),
-          //         return Stack(
-          //           children: <Widget>[
-          //             // 标题栏
-          //             // CustomAppBar(
-          //             //   title: Text(
-          //             //     locationName ?? "",
-          //             //     style: TextStyle(
-          //             //       color: Colors.white
-          //             //           .withOpacity(titleAlpha),
-          //             //       fontSize: 20,
-          //             //     ),
-          //             //   ),
-          //             //   color: Colors.transparent, // TODO:
-          //             //   showShadow: false,
-          //             //   // TODO: 标题栏左侧按钮
-          //             //   leftBtn: IconButton(
-          //             //     icon: Icon(
-          //             //       Icons.menu,
-          //             //       color: Colors.white,
-          //             //     ),
-          //             //     // 打开抽屉菜单
-          //             //     onPressed: () => EventSendHolder()
-          //             //         .sendEvent(
-          //             //             tag: "homeDrawerOpen",
-          //             //             event: true),
-          //             //   ),
-          //             //   // TODO: 标题栏右侧按钮
-          //             //   rightBtns: [
-          //             //     PopupMenuButton(
-          //             //       icon: Icon(
-          //             //         Icons.more_vert,
-          //             //         color: Colors.white,
-          //             //       ),
-          //             //       itemBuilder: (context) => [
-          //             //         // PopupMenuItem(
-          //             //         //   value: "share",
-          //             //         //   child: Text(S.of(context)?.share ?? ''),
-          //             //         // ),
-          //             //         PopupMenuItem(
-          //             //           value: "cities",
-          //             //           child: Text(S
-          //             //                   .of(context)
-          //             //                   ?.cityControl ??
-          //             //               ''),
-          //             //         ),
-          //             //         PopupMenuItem(
-          //             //           value: "weathers",
-          //             //           child: Text(S
-          //             //                   .of(context)
-          //             //                   ?.weathersView ??
-          //             //               ''),
-          //             //         ),
-          //             //       ],
-          //             //       onSelected: (value) {
-          //             //         switch (value) {
-          //             //           // case "share":
-          //             //           //   if (pair.b == null) return;
-          //             //           //   WeatherSharePicker.share(context,
-          //             //           //       weather: pair.a,
-          //             //           //       air: pair.b!,
-          //             //           //       city: location);
-          //             //           //   break;
-          //             //           case "cities":
-          //             //             push(context,
-          //             //                 page: CityControlPage());
-          //             //             break;
-          //             //           case "weathers":
-          //             //             _showWeathersDialog();
-          //             //             break;
-          //             //         }
-          //             //       },
-          //             //     ),
-          //             //   ],
-          //             // ),
-          //           ],
-          //         );
         ),
         // TODO:
         body: AnimatedContainer(
@@ -320,111 +317,6 @@ class WeatherState extends PageState<WeatherPage>
                         : Container();
                   })),
         ));
-    // return Scaffold(
-    //   key: scafKey,
-    //   backgroundColor: _getAppBarColor(type: type), // 计算底部颜色
-    //   // TODO:
-    //   appBar: PreferredSize(
-    //     // TODO:
-    //     child: AnimatedContainer(
-    //       color: _getAppBarColor(type: type),
-    //       duration: const Duration(seconds: 2),
-    //       child: StreamBuilder<double>(
-    //           stream: _titleAlpha.stream,
-    //           initialData: 0.0,
-    //           builder: (context, snapshot) {
-    //             final titleAlpha = snapshot.data ?? 0.0;
-    //             return Stack(
-    //               children: <Widget>[
-    //                 // 顶部城市切换指示条
-    //                 Opacity(
-    //                   opacity: 1 - titleAlpha,
-    //                   // TODO:
-    //                   child: WeatherTitleView(
-    //                     cities: cities,
-    //                     pageValue: pageValue,
-    //                   ),
-    //                 ),
-    //                 // 标题栏
-    //                 CustomAppBar(
-    //                   title: Text(
-    //                     locationName ?? "",
-    //                     style: TextStyle(
-    //                       color: Colors.white
-    //                           .withOpacity(titleAlpha),
-    //                       fontSize: 20,
-    //                     ),
-    //                   ),
-    //                   color: Colors.transparent, // TODO:
-    //                   showShadow: false,
-    //                   // TODO: 标题栏左侧按钮
-    //                   leftBtn: IconButton(
-    //                     icon: Icon(
-    //                       Icons.menu,
-    //                       color: Colors.white,
-    //                     ),
-    //                     // 打开抽屉菜单
-    //                     onPressed: () => EventSendHolder()
-    //                         .sendEvent(
-    //                             tag: "homeDrawerOpen",
-    //                             event: true),
-    //                   ),
-    //                   // TODO: 标题栏右侧按钮
-    //                   rightBtns: [
-    //                     PopupMenuButton(
-    //                       icon: Icon(
-    //                         Icons.more_vert,
-    //                         color: Colors.white,
-    //                       ),
-    //                       itemBuilder: (context) => [
-    //                         // PopupMenuItem(
-    //                         //   value: "share",
-    //                         //   child: Text(S.of(context)?.share ?? ''),
-    //                         // ),
-    //                         PopupMenuItem(
-    //                           value: "cities",
-    //                           child: Text(S
-    //                                   .of(context)
-    //                                   ?.cityControl ??
-    //                               ''),
-    //                         ),
-    //                         PopupMenuItem(
-    //                           value: "weathers",
-    //                           child: Text(S
-    //                                   .of(context)
-    //                                   ?.weathersView ??
-    //                               ''),
-    //                         ),
-    //                       ],
-    //                       onSelected: (value) {
-    //                         switch (value) {
-    //                           // case "share":
-    //                           //   if (pair.b == null) return;
-    //                           //   WeatherSharePicker.share(context,
-    //                           //       weather: pair.a,
-    //                           //       air: pair.b!,
-    //                           //       city: location);
-    //                           //   break;
-    //                           case "cities":
-    //                             push(context,
-    //                                 page: CityControlPage());
-    //                             break;
-    //                           case "weathers":
-    //                             _showWeathersDialog();
-    //                             break;
-    //                         }
-    //                       },
-    //                     ),
-    //                   ],
-    //                 ),
-    //               ],
-    //             );
-    //           }),
-    //       //   },
-    //       // ),
-    //     ),
-    //     preferredSize: Size.fromHeight(getAppBarHeight()),
-    //   ),
   }
 
   // 根据天气类型获取 AppBar 的颜色
@@ -456,78 +348,216 @@ class WeatherState extends PageState<WeatherPage>
     }
   }
 
-  // 动态天气预览弹窗
-  void _showWeathersDialog() {
-    showDialog(
+  // TODO: 定位
+  void _checkLocationPermision() async {
+    // 获取经纬度
+    bool serviceEnabled;
+    LocationPermission permission;
+    // 手机定位服务是否已启用
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // 定位服务未启用
+      _showBottomSheet('定位服务未开启', '请到设置中打开定位服务，以显示当前位置天气。');
+      // TODO:
+      // var res = await Geolocator.openLocationSettings();
+      // if (!res) {
+      //   // 被拒绝
+      //   return null;
+      // }
+      CityModel().getCityByLocation(false);
+    }
+    // App 访问位置权限
+    // LocationPermission[deniedForever|denied|whileInUse|always]
+    permission = await Geolocator.checkPermission();
+    debugPrint(
+        "WeatherPage:_checkLocationPermision:checkPermission: ${permission}");
+
+    if (permission == LocationPermission.deniedForever) {
+      // 不允许
+      _showBottomSheet('允许小鸭天气访问您的位置', '小鸭天气 App 需要访问您的地理位置，以根据您的位置显示当前的天气信息。');
+      CityModel().getCityByLocation(false);
+      return;
+    }
+    if (permission == LocationPermission.denied) {
+      // 询问
+      permission = await Geolocator.requestPermission();
+      debugPrint(
+          "WeatherPage:_checkLocationPermision:requestPermission: ${permission}");
+      if (permission == LocationPermission.deniedForever) {
+        _showBottomSheet(
+            '允许小鸭天气访问您的位置', '小鸭天气 App 需要访问您的地理位置，以根据您的位置显示当前的天气信息。');
+        CityModel().getCityByLocation(false);
+        return;
+      }
+    }
+
+    ToastUtil.showToast(context, '已获取新定位');
+    CityModel().getCityByLocation(true);
+  }
+
+  void _showBottomSheet(String title, String content) {
+    showModalBottomSheet(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          S.of(context)?.weathersView ?? '',
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.black,
-          ),
-        ),
-        contentPadding: const EdgeInsets.only(),
-        titlePadding: const EdgeInsets.fromLTRB(20, 18, 0, 10),
-        content: SingleChildScrollView(
-          physics: const ClampingScrollPhysics(),
-          padding: const EdgeInsets.only(),
-          child: Column(
-            children: <Widget>[
-              _buildDialogItem(title: S.of(context)?.sunny ?? ''),
-              _buildDialogItem(title: S.of(context)?.cloudy ?? ''),
-              _buildDialogItem(title: S.of(context)?.overcast ?? ''),
-              _buildDialogItem(title: S.of(context)?.rain ?? ''),
-              _buildDialogItem(title: S.of(context)?.flashRain ?? ''),
-              _buildDialogItem(title: S.of(context)?.snowRain ?? ''),
-              _buildDialogItem(title: S.of(context)?.snow ?? ''),
-              _buildDialogItem(title: S.of(context)?.hail ?? ''),
-              _buildDialogItem(title: S.of(context)?.fog ?? ''),
-              _buildDialogItem(title: S.of(context)?.smog ?? ''),
-              _buildDialogItem(title: S.of(context)?.sandstorm ?? ''),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // 动态天气预览的选项
-  Widget _buildDialogItem({required String title}) {
-    return Material(
-      color: Colors.white,
-      child: InkWell(
-        onTap: () {
-          pop(context);
-          // _viewModel.switchType(title);
-        },
-        child: Container(
-          height: 48,
-          padding: const EdgeInsets.only(left: 20),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(right: 18),
-                child: Icon(
-                  Icons.panorama_fish_eye,
-                  color: Colors.black54,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return SafeArea(
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              color: Colors.white,
+            ),
+            margin: EdgeInsets.only(left: 12, right: 12),
+            padding: EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                title != ''
+                    ? Text(title, style: TextStyle(fontSize: 20.0))
+                    : Container(),
+                Container(height: title != '' ? 16 : 0),
+                Text(content, style: TextStyle(fontSize: 16.0, height: 2)),
+                Container(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                          Colors.black26,
+                        ),
+                        padding: MaterialStateProperty.all(
+                          EdgeInsets.symmetric(horizontal: 24.0),
+                        ),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24.0),
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        "取消",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Container(width: 16),
+                    TextButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                          const Color(0XFF5697D8),
+                        ),
+                        padding: MaterialStateProperty.all(
+                          EdgeInsets.symmetric(horizontal: 24.0),
+                        ),
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24.0),
+                          ),
+                        ),
+                      ),
+                      onPressed: () {
+                        // Geolocator.openLocationSettings();
+                        AppSettings.openAppSettings(
+                            type: AppSettingsType.location);
+                        // openAppSettings();
+                        // await Geolocator.openAppSettings();
+                      },
+                      child: Text(
+                        "去设置",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              Text(
-                title,
-                style: TextStyle(fontSize: 18, color: Colors.black),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  // 改变天气动画显示状态
-  void changeHideState(bool hide) {
-    // _viewModel.changeHideState(hide);
-  }
+  // // 动态天气预览弹窗
+  // void _showWeathersDialog() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: Text(
+  //         S.of(context)?.weathersView ?? '',
+  //         style: TextStyle(
+  //           fontSize: 20,
+  //           color: Colors.black,
+  //         ),
+  //       ),
+  //       contentPadding: const EdgeInsets.only(),
+  //       titlePadding: const EdgeInsets.fromLTRB(20, 18, 0, 10),
+  //       content: SingleChildScrollView(
+  //         physics: const ClampingScrollPhysics(),
+  //         padding: const EdgeInsets.only(),
+  //         child: Column(
+  //           children: <Widget>[
+  //             _buildDialogItem(title: S.of(context)?.sunny ?? ''),
+  //             _buildDialogItem(title: S.of(context)?.cloudy ?? ''),
+  //             _buildDialogItem(title: S.of(context)?.overcast ?? ''),
+  //             _buildDialogItem(title: S.of(context)?.rain ?? ''),
+  //             _buildDialogItem(title: S.of(context)?.flashRain ?? ''),
+  //             _buildDialogItem(title: S.of(context)?.snowRain ?? ''),
+  //             _buildDialogItem(title: S.of(context)?.snow ?? ''),
+  //             _buildDialogItem(title: S.of(context)?.hail ?? ''),
+  //             _buildDialogItem(title: S.of(context)?.fog ?? ''),
+  //             _buildDialogItem(title: S.of(context)?.smog ?? ''),
+  //             _buildDialogItem(title: S.of(context)?.sandstorm ?? ''),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // // 动态天气预览的选项
+  // Widget _buildDialogItem({required String title}) {
+  //   return Material(
+  //     color: Colors.white,
+  //     child: InkWell(
+  //       onTap: () {
+  //         pop(context);
+  //         // _viewModel.switchType(title);
+  //       },
+  //       child: Container(
+  //         height: 48,
+  //         padding: const EdgeInsets.only(left: 20),
+  //         child: Row(
+  //           crossAxisAlignment: CrossAxisAlignment.center,
+  //           children: <Widget>[
+  //             Padding(
+  //               padding: const EdgeInsets.only(right: 18),
+  //               child: Icon(
+  //                 Icons.panorama_fish_eye,
+  //                 color: Colors.black54,
+  //               ),
+  //             ),
+  //             Text(
+  //               title,
+  //               style: TextStyle(fontSize: 18, color: Colors.black),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // // 改变天气动画显示状态
+  // void changeHideState(bool hide) {
+  //   // _viewModel.changeHideState(hide);
+  // }
 }

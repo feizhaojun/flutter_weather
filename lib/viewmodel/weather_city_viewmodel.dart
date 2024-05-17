@@ -56,8 +56,8 @@ class WeatherCityViewModel extends ViewModel {
       /// 位置服务
       bool serviceEnabled;
       LocationPermission permission;
-      double longitude=0;
-      double latitude=0;
+      double longitude = 0;
+      double latitude = 0;
       try {
         /// 手机GPS服务是否已启用。
         serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -69,21 +69,24 @@ class WeatherCityViewModel extends ViewModel {
             return;
           }
         }
+
         /// 是否允许app访问地理位置
         permission = await Geolocator.checkPermission();
-  
+
         if (permission == LocationPermission.denied) {
           /// 之前访问设备位置的权限被拒绝，重新申请权限
           permission = await Geolocator.requestPermission();
-          if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+          if (permission == LocationPermission.denied ||
+              permission == LocationPermission.deniedForever) {
             /// 再次被拒绝。根据Android指南，你的应用现在应该显示一个解释性UI。
             return;
           }
         } else if (permission == LocationPermission.deniedForever) {
           /// 之前权限被永久拒绝，打开app权限设置页面
-          await Geolocator.openAppSettings();
+          // await Geolocator.openAppSettings();
           return;
         }
+
         /// 允许访问地理位置，获取地理位置
         Position position = await Geolocator.getCurrentPosition();
         longitude = position.longitude;
@@ -92,7 +95,8 @@ class WeatherCityViewModel extends ViewModel {
         // print(e);
       }
 
-      final _city = await _service.getCity(longitude: longitude.toString(), latitude: latitude.toString());
+      final _city = await _service.getCity(
+          longitude: longitude.toString(), latitude: latitude.toString());
       city = _city;
       // TODO: 兼容之前的数据格式
       mCity = District(
@@ -113,33 +117,32 @@ class WeatherCityViewModel extends ViewModel {
       // perStatus.safeAdd(status);
 
       // if (status != PermissionStatus.denied) {
-        // mCity = District(
-        //   name: "北京",
-        //   id: '110101',
-        // );
-        // final result = await ChannelUtil.getLocation();
-        // if (result != null) {
-        //   final csv = await rootBundle.loadString("assets/china-city-list.csv");
-        //   final csvList = const CsvToListConverter().convert(csv);
-        //   for (int i = 2; i < csvList.length; i++) {
-        //     final list = csvList[i];
-        //     if (list[2] == result.district && list[7] == result.province) {
-        //       mCity = District(name: result.district, id: list[0]);
-        //       break;
-        //     }
-        //   }
+      // mCity = District(
+      //   name: "北京",
+      //   id: '110101',
+      // );
+      // final result = await ChannelUtil.getLocation();
+      // if (result != null) {
+      //   final csv = await rootBundle.loadString("assets/china-city-list.csv");
+      //   final csvList = const CsvToListConverter().convert(csv);
+      //   for (int i = 2; i < csvList.length; i++) {
+      //     final list = csvList[i];
+      //     if (list[2] == result.district && list[7] == result.province) {
+      //       mCity = District(name: result.district, id: list[0]);
+      //       break;
+      //     }
+      //   }
 
-        //   if (mCity == null) {
-        //     mCity = WeatherHolder().cities![index];
-        //   }
-        // } else {
-        //   mCity = WeatherHolder().cities![index];
-        // }
-    //   } else {
-    //     mCity = WeatherHolder().cities![index];
-    //   }
+      //   if (mCity == null) {
+      //     mCity = WeatherHolder().cities![index];
+      //   }
+      // } else {
+      //   mCity = WeatherHolder().cities![index];
+      // }
+      //   } else {
+      //     mCity = WeatherHolder().cities![index];
+      //   }
     } else {
-
       mCity = WeatherHolder().cities![index];
       city = City(
         name: mCity.name,

@@ -24,7 +24,7 @@ extension SubscriptionExt on StreamSubscription {
 
 extension ControllerExt<T> on StreamController<T> {
   void safeAdd(T data) {
-    debugPrint("safeAdd: ${data} ${DateTime.now()}");
+    // debugPrint("safeAdd: ${data} ${DateTime.now()}");
     if (this.isClosed) return;
 
     this.add(data);

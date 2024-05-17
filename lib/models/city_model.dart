@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 // Data
 import 'package:flutter_weather/data/city_data.dart';
+import 'package:flutter_weather/model/data/page_module_data.dart';
+import 'package:flutter_weather/models/page_modules_model.dart';
 // Service
 import 'package:flutter_weather/services/weather_service.dart';
 // Utils
@@ -26,93 +28,100 @@ class CityModel {
 
   CityModel._internal() {
     debugPrint('CityModel._internal');
-
-    Connectivity()
-        .onConnectivityChanged
-        .listen((List<ConnectivityResult> result) {
-      debugPrint("Connectivity: ${result}");
-      if (result[0] != ConnectivityResult.none) {
-        init();
-      }
-    });
-
     cityList = _cityList.stream.asBroadcastStream();
+
+    // TODO:
+    // Connectivity()
+    //     .onConnectivityChanged
+    //     .listen((List<ConnectivityResult> result) {
+    //   debugPrint("Connectivity: ${result}");
+    //   if (result[0] != ConnectivityResult.none) {
+    //     init();
+    //   }
+    // });
   }
 
-  void init() {
+  void getCityByLocation(bool hasPermission) async {
     List<City>? _cityListCache = SharedDepository().cityList;
     debugPrint(_cityListCache.toString());
-    getCityByLocation().then((city) {
-      debugPrint("Location: ${city?.toJson()}");
-      if (city == null) {
-        // TODO: 返回一个随机城市
-        city = City(
-            affiliation: '北京, 中国',
-            key: 'weathercn:101010200',
-            name: '海淀',
-            longitude: '116.298',
-            latitude: '39.959');
-      }
-      if (_cityListCache == null) {
-        _cityListCache = [city];
-      } else {
-        _cityListCache =
-            _cityListCache?.where((el) => el.name != city?.name).toList();
-        _cityListCache?.insert(0, city);
-        _cityListCache =
-            _cityListCache?.sublist(0, min(5, _cityListCache!.length));
-      }
-      SharedDepository().setCityList(_cityListCache!);
-      // SharedDepository().setCityList([_cityListCache![0]]);
-      _cityList.safeAdd(_cityListCache!);
-    });
-  }
-
-  // 获取城市定位
-  Future<City?> getCityByLocation() async {
-    // 获取经纬度
-    bool serviceEnabled;
-    LocationPermission permission;
     double longitude = 0;
     double latitude = 0;
-    try {
-      // 手机 GPS 服务是否已启用
-      serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        // 定位服务未启用，要求用户启用定位服务
-        var res = await Geolocator.openLocationSettings();
-        if (!res) {
-          // 被拒绝
-          return null;
-        }
-      }
-      // 是否允许app访问地理位置
-      permission = await Geolocator.checkPermission();
+    late City city;
+    // TODO: 随机城市库
+    List<City> cityListPool = [
+      City.fromJson({
+        "affiliation": "北京市, 中国",
+        "key": "weathercn:101010300",
+        "latitude": "39.921",
+        "locationKey": "weathercn:101010300",
+        "longitude": "116.486",
+        "name": "朝阳区"
+      }),
+      City.fromJson({
+        "affiliation": "日照市, 山东, 中国",
+        "key": "weathercn:101121504",
+        "latitude": "35.469",
+        "locationKey": "weathercn:101121504",
+        "longitude": "119.378",
+        "name": "东港区"
+      }),
+      City.fromJson({
+        "affiliation": "上海市, 中国",
+        "key": "weathercn:101021200",
+        "latitude": "31.213",
+        "locationKey": "weathercn:101021200",
+        "longitude": "121.445",
+        "name": "徐汇区"
+      }),
+      City.fromJson({
+        "affiliation": "广州市, 广东, 中国",
+        "key": "weathercn:101280107",
+        "latitude": "23.139",
+        "locationKey": "weathercn:101280107",
+        "longitude": "113.288",
+        "name": "越秀区"
+      }),
+      City.fromJson({
+        "affiliation": "深圳市, 广东, 中国",
+        "key": "weathercn:101280602",
+        "latitude": "22.582",
+        "locationKey": "weathercn:101280602",
+        "longitude": "114.156",
+        "name": "罗湖区"
+      }),
+      City.fromJson({
+        "affiliation": "西安市, 陕西, 中国",
+        "key": "weathercn:101110108",
+        "latitude": "34.266",
+        "locationKey": "weathercn:101110108",
+        "longitude": "108.961",
+        "name": "新城区"
+      }),
+    ];
 
-      if (permission == LocationPermission.denied) {
-        // 之前访问设备位置的权限被拒绝，重新申请权限
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied ||
-            permission == LocationPermission.deniedForever) {
-          // 再次被拒绝。根据Android指南，你的应用现在应该显示一个解释性 UI。
-          return null;
-        }
-      } else if (permission == LocationPermission.deniedForever) {
-        // 之前权限被永久拒绝，打开 app 权限设置页面
-        await Geolocator.openAppSettings();
-        return null;
-      }
+    if (hasPermission) {
       // 允许访问地理位置，获取地理位置
       Position position = await Geolocator.getCurrentPosition();
       longitude = position.longitude;
       latitude = position.latitude;
-    } catch (e) {
-      // print(e);
+
+      city = await _service.getCity(
+          longitude: longitude.toString(), latitude: latitude.toString());
+    } else {
+      // TODO: 随机一个城市
+      city = cityListPool[Random().nextInt(cityListPool.length)];
     }
 
-    final _city = await _service.getCity(
-        longitude: longitude.toString(), latitude: latitude.toString());
-    return _city;
+    if (_cityListCache == null) {
+      _cityListCache = [city];
+    } else {
+      _cityListCache =
+          _cityListCache.where((el) => el.name != city.name).toList();
+      _cityListCache.insert(0, city);
+      _cityListCache = _cityListCache.sublist(0, min(5, _cityListCache.length));
+    }
+    SharedDepository().setCityList(_cityListCache);
+    _cityList.safeAdd(_cityListCache);
   }
 
   void dispose() {

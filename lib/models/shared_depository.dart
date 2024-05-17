@@ -53,7 +53,7 @@ class SharedDepository {
   // 天气
   Weather? getWeather(String key) {
     final _weather = getString(key);
-    debugPrint("Shared:getWeather: ${_weather}");
+    // debugPrint("Shared:getWeather: ${_weather}");
     return _weather != null ? Weather.fromJson(jsonDecode(_weather)) : null;
   }
 

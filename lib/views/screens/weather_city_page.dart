@@ -287,31 +287,39 @@ class WeatherCityState extends PageState<WeatherCityPage>
                             Divider(color: AppColor.line),
 
                             // 空气质量
-                            Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.only(
-                                  left: 20, top: 16, bottom: 16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "空气质量 ${getAqiStr(weather?.aqi?.aqi)} - AQI ${weather?.aqi?.aqi}",
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        fontSize: 16, color: AppColor.text2),
-                                  ),
-                                  Padding(padding: EdgeInsets.only(top: 8)),
-                                  Text(
-                                    "${weather?.aqi?.suggest}",
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                        fontSize: 14, color: AppColor.text3),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            weather?.aqi?.aqi != null
+                                ? Container(
+                                    width: double.infinity,
+                                    padding: EdgeInsets.only(
+                                        left: 20, top: 16, bottom: 16),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "空气质量 ${getAqiStr(weather?.aqi?.aqi)} - AQI ${weather?.aqi?.aqi}",
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: AppColor.text2),
+                                        ),
+                                        Padding(
+                                            padding: EdgeInsets.only(top: 8)),
+                                        Text(
+                                          "${weather?.aqi?.suggest}",
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: AppColor.text3),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
 
-                            Divider(color: AppColor.line),
+                            weather?.aqi?.aqi != null
+                                ? Divider(color: AppColor.line)
+                                : Container(),
 
                             // 一周天气预测
                             Container(
@@ -569,24 +577,26 @@ class WeatherCityState extends PageState<WeatherCityPage>
           mainAxisAlignment: MainAxisAlignment.center,
           // crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  getAqiStr(weather?.aqi?.aqi),
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
-                Text(
-                  // TODO:
-                  // S.of(context)?.hum ?? '',
-                  '空气质量',
-                  style: TextStyle(fontSize: 12, color: Colors.white),
-                ),
-              ],
-            ),
+            weather?.aqi?.aqi != null
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        getAqiStr(weather?.aqi?.aqi),
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                      Text(
+                        // TODO:
+                        // S.of(context)?.hum ?? '',
+                        '空气质量',
+                        style: TextStyle(fontSize: 12, color: Colors.white),
+                      ),
+                    ],
+                  )
+                : Container(),
             Container(
               margin: const EdgeInsets.only(left: 16, right: 16),
-              width: 1,
+              width: weather?.aqi?.aqi != null ? 1 : 0,
               height: 25,
               color: Colors.white,
             ),

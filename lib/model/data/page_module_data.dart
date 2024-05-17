@@ -4,6 +4,9 @@ enum PageType {
   READ, // 闲读页面
   GANHUO, // 干货页面
   COLLECT, // 收藏页面
+  NO_LOCATION_PERMISSION, // 未取得定位权限
+  NO_NETWORK_PERMISSION, // 未取得网络权限
+  BLANK, // 空白页面
 }
 
 class PageModule {
@@ -29,6 +32,15 @@ class PageModule {
       case "collect":
         page = PageType.COLLECT;
         break;
+      case "no_location_permission":
+        page = PageType.NO_LOCATION_PERMISSION;
+        break;
+      case "no_network_permission":
+        page = PageType.NO_NETWORK_PERMISSION;
+        break;
+      case "blank":
+        page = PageType.BLANK;
+        break;
     }
     open = json["open"] ?? true;
   }
@@ -50,6 +62,15 @@ class PageModule {
         break;
       case PageType.COLLECT:
         data["page"] = "collect";
+        break;
+      case PageType.NO_LOCATION_PERMISSION:
+        data["page"] = "no_location_permission";
+        break;
+      case PageType.NO_NETWORK_PERMISSION:
+        data["page"] = "no_network_permission";
+        break;
+      case PageType.BLANK:
+        data["page"] = "blank";
         break;
     }
     data["open"] = this.open;
